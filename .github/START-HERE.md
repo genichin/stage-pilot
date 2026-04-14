@@ -16,7 +16,6 @@
 2. 파일명 형식: dcy-<3자리문서번호>_YYYY-MM-DD_<topic-slug>.discovery.md
 3. 날짜는 생성일 기준으로 유지
 4. 작성 템플릿: .github/templates/discovery-note.template.md
-5. 문서 하단 Discovery Freeze 필수
 
 ## 2. Planning Scoring Quick Start
 
