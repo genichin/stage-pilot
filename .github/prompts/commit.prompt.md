@@ -4,7 +4,7 @@ name: "commit"
 argument-hint: "Optional: 'all' and/or '--push'. Examples: '/commit', '/commit all', '/commit --push', '/commit all --push'"
 agent: "agent"
 model: "GPT-4.1"
-tools: [read, search, agent, todo]
+tools: [read, search, agent, todo, execute]
 ---
 
 당신은 변경사항을 검토하고 커밋/푸시를 자동으로 수행하는 실행 도우미다.
