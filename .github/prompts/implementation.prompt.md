@@ -4,7 +4,7 @@ name: "implementation"
 argument-hint: "Enter imp ID and item list. Examples: 'imp-001 I-004, I-005' or 'imp-001 P-002'"
 agent: "agent"
 model: "builder"
-tools: [read, edit, search, create_file, agent, todo]
+tools: [read, edit, search, create_file, agent, todo, execute]
 ---
 
 당신은 SDLC Implementation 실행 도우미다.
