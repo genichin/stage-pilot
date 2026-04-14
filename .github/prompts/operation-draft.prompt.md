@@ -24,6 +24,7 @@ tools: [read, edit, search, agent, todo]
    - 파일명: ops-<3자리문서번호>_YYYY-MM-DD_<topic-slug>.operations.md
    - 문서번호: 기존 ops 번호 최대값 + 1, 없으면 001부터 시작
    - 날짜: 생성일 기준, 이후 수정 시 파일명 날짜 유지
+   - 본문 템플릿: .github/templates/operations-note.template.md
    - append 금지, 생성/갱신 시 overwrite
 6. Operations 작성 원칙:
    - Release의 배포 체크리스트, 롤백 계획, 관찰 계획을 근거로 운영 추적 문맥을 작성한다.
@@ -42,7 +43,7 @@ tools: [read, edit, search, agent, todo]
    - 상태: 초안 생성 시 `draft`
    - 승인자: Release 문서에서 인계받음
    - 승인 시각: `{{CONFIRM: 배포 완료 후 Operations 확인}}`
-9. # 6 사용자 결정 필요 항목 요약 규칙:
+9. # 7 사용자 결정 필요 항목 요약 규칙:
    - 본문의 {{DECIDE}}/{{CONFIRM}}/{{DATA}}를 유형별로 집계한다.
    - 미해결 플레이스홀더가 없으면 `현재 미해결 플레이스홀더 없음`으로 작성한다.
 
@@ -57,7 +58,7 @@ tools: [read, edit, search, agent, todo]
 8. Postmortem 섹션 생성 (8개 항목 모두 {{DATA:}} 또는 등급별 예시 포함)
 9. 환류 항목 섹션 생성 (발견된 개선 사항 추출 또는 {{DATA:}})
 10. Operations 문서 저장
-11. 본문 플레이스홀더 집계 후 # 6 작성
+11. 본문 플레이스홀더 집계 후 # 7 작성
 12. 최종 응답에 처리 요약 제공
 
 Operations 문서 출력 섹션 순서(고정):
@@ -75,7 +76,7 @@ Operations 문서 출력 섹션 순서(고정):
 2. 입력 Release 문서 경로
 3. Operations 문서 생성/갱신 결과
 4. 배포 실행 기록 초안 요약
-5. 모니터링 관찰 항목 복사 상여
+5. 모니터링 관찰 항목 복사 상세
 6. Postmortem 템플릿 완성도
 7. 업데이트된 파일 경로 목록
 8. 다음 액션 (배포 실행자가 DATA 항목 채우기)

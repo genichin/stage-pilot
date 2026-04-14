@@ -38,13 +38,21 @@ bash .github/tools/calc_priority_scores.sh .github/templates/planning-backlog-sc
    - .github/runbooks/services/web.rollback-runbook.md
 3. 배포 전 각 서비스 인스턴스의 Trigger/Procedure/Validation 최신화
 
-## 4. Verification Exception Quick Start
+## 4. Operations Quick Start
+
+1. 기본 템플릿: .github/templates/operations-note.template.md
+2. 생성 프롬프트: /operation-draft rel-001
+3. 검토 프롬프트: /operation-review rel-001
+4. 승인 프롬프트: /operation-confirm rel-001
+5. 산출 경로: docs/sdlc/operations/ops-<3자리문서번호>_YYYY-MM-DD_<topic-slug>.operations.md
+
+## 5. Verification Exception Quick Start
 
 1. Major 결함 예외는 승인자 정책을 따름
 2. Valid Until 설정은 만료 전 재검증 필수
 3. 만료/해소 상태를 검증 리포트에 반영
 
-## 5. Minimum Go-live Checklist
+## 6. Minimum Go-live Checklist
 
 1. 우선순위 점수표 완료
 2. 테스트 실행 근거 첨부
