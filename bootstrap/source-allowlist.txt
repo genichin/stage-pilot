@@ -1,0 +1,14 @@
+# Relative paths from selected source .github directory.
+# Files
+AGENTS.md
+START-HERE.md
+copilot-instructions.md
+
+# Directories
+agents/
+instructions/
+prompts/
+scripts/
+skills/
+templates/
+tools/
