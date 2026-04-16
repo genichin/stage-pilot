@@ -33,6 +33,24 @@ bash .vendor/stage-pilot/bootstrap/update.sh --skip-install .
 
 `.github/prompts/`에 단계별 프롬프트가 정의되어 있으며, Copilot Chat에서 `/프롬프트이름 인자` 형태로 실행한다.
 
+### 빠른 시작
+
+처음부터 전체 SDLC 초안 세트를 만들고 싶다면 아래 명령으로 같은 번호의 draft 문서 세트를 한 번에 생성할 수 있다.
+
+```text
+/new-sdlc 결제 실패 알림 정책을 도입한다
+```
+
+이 명령은 `dcy/pln/dsn/imp/ver/rel/ops` 문서를 같은 번호로 모두 `draft` 상태로 만든다. 다만 승인 작업은 Discovery부터 순차적으로 진행해야 한다.
+
+초안 생성 후 순차 검토/승인을 자동 실행하려면 아래 명령을 사용한다.
+
+```text
+/run-sdlc dcy-001 홍길동
+```
+
+이 명령은 Discovery부터 Operations까지 순서대로 검토/승인을 시도한다. 이미 승인된 단계는 건너뛰며, 중간 단계에서 승인 불가면 해당 단계에서 멈추고 미충족 항목과 추가 결정사항을 알려준다.
+
 ### 기본 실행 순서
 
 1. Discovery
@@ -47,13 +65,15 @@ bash .vendor/stage-pilot/bootstrap/update.sh --skip-install .
 
 ```text
 # Discovery
+/new-sdlc 결제 실패 알림 정책을 도입한다
+/run-sdlc dcy-001 홍길동
 /discovery-draft 결제 실패 알림 정책을 도입한다
 /discovery-review dcy-001
 /discovery-confirm dcy-001
 
 # Planning
 /planning-draft dcy-001
-/planning-review dcy-001
+/planning-review pln-001
 /planning-confirm pln-001
 
 # Design

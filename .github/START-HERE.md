@@ -10,6 +10,24 @@
 6. Release 체크리스트 + 런북 준비
 7. Operations 모니터링 및 환류
 
+### Quick Scaffold
+
+처음부터 전체 단계 draft 세트를 만들려면 아래 프롬프트를 사용한다.
+
+```text
+/new-sdlc 기능 또는 변경 설명 한 문장
+```
+
+이 명령은 동일 번호의 dcy/pln/dsn/imp/ver/rel/ops draft 문서를 생성한다. 승인과 확정은 반드시 Discovery부터 순차적으로 진행한다.
+
+순차 승인 자동 실행 예시:
+
+```text
+/run-sdlc dcy-001 홍길동
+```
+
+재실행 시 동일 명령을 사용하면 이미 confirmed 단계는 건너뛰고 다음 미승인 단계부터 계속 진행한다.
+
 ### Discovery 저장 규칙
 
 1. 저장 폴더: docs/sdlc/discovery/
