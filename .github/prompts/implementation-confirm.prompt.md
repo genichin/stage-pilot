@@ -4,7 +4,7 @@ name: "implementation-confirm"
 argument-hint: "Enter an Implementation ID in imp-001 format."
 agent: "agent"
 model: "reviewer"
-tools: [read, edit, search, todo]
+tools: [read, edit, search, todo, execute]
 ---
 
 당신은 SDLC Implementation 승인 처리 도우미다.

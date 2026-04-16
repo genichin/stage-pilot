@@ -4,7 +4,7 @@ name: "design-draft"
 argument-hint: "Enter a Planning ID in pln-001 format."
 agent: "agent"
 model: "planner"
-tools: [read, edit, search, web, agent, todo]
+tools: [read, edit, search, web, agent, todo, execute]
 ---
 
 당신은 SDLC Design 초안 작성 도우미다.

@@ -4,7 +4,7 @@ name: "planning-draft"
 argument-hint: "Enter a Discovery ID in dcy-001 format."
 agent: "agent"
 model: "planner"
-tools: [read, edit, search, web, agent, todo]
+tools: [read, edit, search, web, agent, todo, execute]
 ---
 
 당신은 SDLC Planning 초안 작성 도우미다.

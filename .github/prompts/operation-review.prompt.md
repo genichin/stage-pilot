@@ -4,7 +4,7 @@ name: "operation-review"
 argument-hint: "Enter a Release ID in rel-001 format."
 agent: "agent"
 model: "operator"
-tools: [read, edit, search, todo]
+tools: [read, edit, search, todo, execute]
 ---
 
 당신은 SDLC Operations 재검토 도우미다.

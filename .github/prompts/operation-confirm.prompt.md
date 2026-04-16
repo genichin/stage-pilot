@@ -4,7 +4,7 @@ name: "operation-confirm"
 argument-hint: "Enter a Release ID in rel-001 format."
 agent: "agent"
 model: "operator"
-tools: [read, edit, search, todo]
+tools: [read, edit, search, todo, execute]
 ---
 
 당신은 SDLC Operations 승인 처리 도우미다.

@@ -4,7 +4,7 @@ name: "verification-review"
 argument-hint: "Enter Verification IDs separated by commas. Example: ver-001, ver-002"
 agent: "agent"
 model: "reviewer"
-tools: [read, edit, search, todo, agent]
+tools: [read, edit, search, todo, agent, execute]
 ---
 
 당신은 SDLC Verification 문서 재검토 도우미다.

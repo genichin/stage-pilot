@@ -4,7 +4,7 @@ name: "release-confirm"
 argument-hint: "Enter a Verification ID in ver-001 format."
 agent: "agent"
 model: "releaser"
-tools: [read, edit, search, todo]
+tools: [read, edit, search, todo, execute]
 ---
 
 당신은 SDLC Release 승인 처리 도우미다.

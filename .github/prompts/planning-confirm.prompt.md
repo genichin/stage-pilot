@@ -4,7 +4,7 @@ name: "planning-confirm"
 argument-hint: "Enter a Planning ID in pln-001 format."
 agent: "agent"
 model: "reviewer"
-tools: [read, edit, search, todo]
+tools: [read, edit, search, todo, execute]
 ---
 
 당신은 SDLC Planning 승인 처리 도우미다.

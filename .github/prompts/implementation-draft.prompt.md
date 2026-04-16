@@ -4,7 +4,7 @@ name: "implementation-draft"
 argument-hint: "Enter a Design ID in dsn-001 format."
 agent: "agent"
 model: "builder"
-tools: [read, edit, search, agent, todo]
+tools: [read, edit, search, agent, todo, execute]
 ---
 
 당신은 SDLC Implementation 초안 작성 도우미다.

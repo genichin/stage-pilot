@@ -4,7 +4,7 @@ name: "release-draft"
 argument-hint: "Enter a Verification ID in ver-001 format."
 agent: "agent"
 model: "releaser"
-tools: [read, edit, search, agent, todo]
+tools: [read, edit, search, agent, todo, execute]
 ---
 
 당신은 SDLC Release 초안 작성 도우미다.

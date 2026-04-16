@@ -4,7 +4,7 @@ name: "discovery-confirm"
 argument-hint: "Enter a Discovery ID in dcy-001 format."
 agent: "agent"
 model: "reviewer"
-tools: [read, edit, search, todo]
+tools: [read, edit, search, todo, execute]
 ---
 
 당신은 SDLC Discovery 승인 처리 도우미다.

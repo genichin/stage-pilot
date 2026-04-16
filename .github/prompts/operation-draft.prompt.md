@@ -4,7 +4,7 @@ name: "operation-draft"
 argument-hint: "Enter a Release ID in rel-001 format."
 agent: "agent"
 model: "operator"
-tools: [read, edit, search, agent, todo]
+tools: [read, edit, search, agent, todo, execute]
 ---
 
 당신은 SDLC Operations 초안 작성 도우미다.

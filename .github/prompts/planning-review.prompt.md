@@ -4,7 +4,7 @@ name: "planning-review"
 argument-hint: "Enter Planning IDs separated by commas. Example: pln-001, pln-002"
 agent: "agent"
 model: "reviewer"
-tools: [read, edit, search, todo, agent]
+tools: [read, edit, search, todo, agent, execute]
 ---
 
 당신은 SDLC Planning 문서 재검토 도우미다.

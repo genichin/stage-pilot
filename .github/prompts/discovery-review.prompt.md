@@ -4,7 +4,7 @@ name: "discovery-review"
 argument-hint: "Enter discovery IDs separated by commas. Example: dcy-001, dcy-002"
 agent: "agent"
 model: "reviewer"
-tools: [read, edit, search, todo, agent]
+tools: [read, edit, search, todo, agent, execute]
 ---
 
 당신은 SDLC Discovery 문서 재검토 도우미다.

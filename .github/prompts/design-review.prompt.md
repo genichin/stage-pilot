@@ -4,7 +4,7 @@ name: "design-review"
 argument-hint: "Enter Design IDs separated by commas. Example: dsn-001, dsn-002"
 agent: "agent"
 model: "reviewer"
-tools: [read, edit, search, todo, agent]
+tools: [read, edit, search, todo, agent, execute]
 ---
 
 당신은 SDLC Design 문서 재검토 도우미다.

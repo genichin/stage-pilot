@@ -4,7 +4,7 @@ name: "release-review"
 argument-hint: "Enter Verification IDs separated by commas. Example: ver-001, ver-002"
 agent: "agent"
 model: "releaser"
-tools: [read, edit, search, todo, agent]
+tools: [read, edit, search, todo, agent, execute]
 ---
 
 당신은 SDLC Release 문서 재검토 도우미다.

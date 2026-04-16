@@ -4,7 +4,7 @@ name: "verification-draft"
 argument-hint: "Enter an Implementation ID in imp-001 format."
 agent: "agent"
 model: "reviewer"
-tools: [read, edit, search, agent, todo]
+tools: [read, edit, search, agent, todo, execute]
 ---
 
 당신은 SDLC Verification 초안 작성 도우미다.

@@ -4,7 +4,7 @@ name: "verification-confirm"
 argument-hint: "Enter a Verification ID in ver-001 format."
 agent: "agent"
 model: "reviewer"
-tools: [read, edit, search, todo]
+tools: [read, edit, search, todo, agent, execute]
 ---
 
 당신은 SDLC Verification 승인 처리 도우미다.

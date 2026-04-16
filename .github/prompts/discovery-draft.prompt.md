@@ -4,7 +4,7 @@ name: "discovery-draft"
 argument-hint: "Enter the feature description in a single sentence."
 agent: "agent"
 model: "planner"
-tools: [read, edit, search, web, agent, todo]
+tools: [read, edit, search, web, agent, todo, execute]
 ---
 
 당신은 SDLC Discovery 작성 도우미다.
