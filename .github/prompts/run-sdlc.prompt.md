@@ -33,6 +33,8 @@ Follow all rules below.
    - Always start from Discovery.
    - If a document is already `confirmed`, pass it and move to the next stage.
    - If a document is `draft`, first normalize it using review rules, then attempt confirmation using confirm rules.
+   - For the Implementation stage, do not attempt confirmation immediately after draft normalization.
+   - For the Implementation stage, if the draft is actionable with no additional user decisions required, execute implementation work first, then attempt confirmation.
    - If confirmation succeeds, move to the next stage.
    - When moving to the next stage, if that stage document does not exist, generate a draft for that stage and continue from the generated draft.
 6. Reuse existing review/confirm rules:
@@ -48,10 +50,12 @@ Follow all rules below.
      - /planning-review + /planning-confirm
      - /design-review + /design-confirm
      - /implementation-draft (for normalization reference) + /implementation-confirm
+       - /implementation imp-xyz to execute real implementation work when the Implementation document is actionable
      - /verification-review + /verification-confirm
      - /release-review + /release-confirm
      - /operation-review + /operation-confirm
    - If criteria are insufficient, read the corresponding prompt file and apply the same validation rules.
+    - For the Implementation stage, also follow /implementation prompt rules to determine whether real execution can proceed.
 7. Confirmation handling rules:
    - When converting a document to `confirmed`, set the approver to the input reviewer name.
    - Set approval date using the execution date (YYYY-MM-DD).
@@ -63,6 +67,7 @@ Follow all rules below.
      - Reason for failure (unmet checklist items)
      - Additional required decisions ({{DECIDE}}/{{CONFIRM}}/{{DATA}})
      - Recommended restart action
+   - For the Implementation stage, if real execution cannot proceed because additional user decisions are still required, stop at Implementation and report those unresolved items.
 9. Restart rules:
    - Always use the same command format to restart: `/run-sdlc dcy-xyz reviewer-name`.
    - On rerun, skip already confirmed stages and continue from the next unconfirmed stage.
@@ -70,6 +75,9 @@ Follow all rules below.
    - After confirming a stage, if the next stage document is draft, first refine upstream input path linkage and key field consistency, then start review.
    - If the next stage document does not exist, create it first using the matching stage draft prompt, then refine upstream input path linkage and key field consistency before starting review.
    - Do not fill unsupported definitive values.
+   - For the Implementation stage, after draft refinement check whether unresolved {{DECIDE}} or {{DATA}} placeholders remain in implementation-critical sections.
+   - If unresolved user decisions remain, stop instead of executing implementation.
+   - If no additional user decision is required and the work items are executable, run `/implementation imp-xyz` before `/implementation-confirm`.
 11. Safety rules:
    - Do not create a missing Discovery document automatically.
    - Only create missing downstream stage documents that belong to the same shared sequence number.
@@ -84,7 +92,13 @@ Execution procedure:
    - If downstream stage is missing: create draft using the matching stage draft prompt
    - Check status
    - If confirmed: skip
-   - If draft: review normalization -> confirmation attempt
+   - If draft and stage is not Implementation: review normalization -> confirmation attempt
+   - If draft and stage is Implementation:
+     - normalize the draft
+     - inspect whether additional user decisions are still required
+     - if decisions remain: stop/report
+     - if executable: run real implementation work using `/implementation imp-xyz`
+     - after successful execution, attempt `/implementation-confirm`
    - If failed: stop/report
 4. Report final outcome.
 
@@ -93,6 +107,7 @@ Final response format:
 2. Common sequence number and target file paths
 3. Stage-by-stage processing result (skip/confirmed/stopped)
    - Include draft-created status where applicable
+   - Include implementation-executed status where applicable
 4. Stop details (if stopped)
    - Stopped stage
    - Reason for non-approval
@@ -101,6 +116,7 @@ Final response format:
    - Whether all stages are confirmed
    - List of documents confirmed in this run
    - List of drafts created in this run
+   - List of implementation stages executed in this run
 6. Next action
    - Restart command or follow-up work
 
