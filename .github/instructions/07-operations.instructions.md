@@ -61,15 +61,17 @@ description: "Use when: operations, monitoring, incident handling, postmortem"
 1. Operations 본문 템플릿: .github/templates/operations-note.template.md
 2. Operations 초안 프롬프트: .github/prompts/operation-draft.prompt.md
 3. Operations 재검토 프롬프트: .github/prompts/operation-review.prompt.md
-4. Operations 승인 프롬프트: .github/prompts/operation-confirm.prompt.md
-5. Operations 본문 저장 경로(기본): docs/sdlc/operations/
-6. Operations 문서 ID 패턴: ops-<3자리순차>_YYYY-MM-DD_<topic-slug>.operations.md
+4. Operations 이슈 분류 프롬프트: .github/prompts/operation-triage.prompt.md
+5. Operations 승인 프롬프트: .github/prompts/operation-confirm.prompt.md
+6. Operations 본문 저장 경로(기본): docs/sdlc/operations/
+7. Operations 문서 ID 패턴: ops-<3자리순차>_YYYY-MM-DD_<topic-slug>.operations.md
 
 ### Automation Usage
 
 1. Release 부터 Operations 초안 자동 생성: `/operation-draft rel-001`
 2. Operations 문서 검토: `/operation-review rel-001` (단순 검토, 수정 없음)
-3. Operations 승인 처리: `/operation-confirm rel-001` (confirmed 상태 전환 + 플레이스홀더 정리)
+3. 보고된 문제 분류 및 환류 경로 결정: `/operation-triage <issue summary>`
+4. Operations 승인 처리: `/operation-confirm rel-001` (confirmed 상태 전환 + 플레이스홀더 정리)
 
 ## DoD (Exit)
 

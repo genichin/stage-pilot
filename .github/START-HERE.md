@@ -42,8 +42,9 @@ bash .github/tools/calc_priority_scores.sh .github/templates/planning-backlog-sc
 1. 기본 템플릿: .github/templates/operations-note.template.md
 2. 생성 프롬프트: /operation-draft rel-001
 3. 검토 프롬프트: /operation-review rel-001
-4. 승인 프롬프트: /operation-confirm rel-001
-5. 산출 경로: docs/sdlc/operations/ops-<3자리문서번호>_YYYY-MM-DD_<topic-slug>.operations.md
+4. 이슈 분류 프롬프트: /operation-triage <issue summary>
+5. 승인 프롬프트: /operation-confirm rel-001
+6. 산출 경로: docs/sdlc/operations/ops-<3자리문서번호>_YYYY-MM-DD_<topic-slug>.operations.md
 
 ## 5. Verification Exception Quick Start
 

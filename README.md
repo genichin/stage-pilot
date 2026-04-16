@@ -80,6 +80,7 @@ bash .vendor/stage-pilot/bootstrap/update.sh --skip-install .
 /operation-draft rel-001
 /operation-review rel-001
 /operation-confirm rel-001
+/operation-triage 문제: 로그인 후 세션 만료 시 특정 브라우저에서 무한 리다이렉트가 발생한다. 증상: 만료된 세션으로 접근하면 /login 과 /callback 사이를 반복 이동한다. 기대 동작: 세션 만료 시 로그인 페이지로 1회 이동하고 재로그인 안내를 보여야 한다. 영향도: Safari 사용자 일부가 서비스 재진입 불가. 재현 조건: Safari 17, 기존 세션 쿠키 보유, rel-001 배포 이후. 관련 문서: rel-001 ops-001
 ```
 
 ### 문서 ID 규칙
