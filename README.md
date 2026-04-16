@@ -19,6 +19,9 @@ bash .vendor/stage-pilot/bootstrap/install.sh .
 # 원격이 등록된 경우(stage-pilot remote 우선 사용)
 bash .vendor/stage-pilot/bootstrap/update.sh .
 
+# 충돌 파일을 보존하고 싶을 때(덮어쓰기 비활성화)
+bash .vendor/stage-pilot/bootstrap/update.sh --no-overwrite .
+
 # 원격 없이 URL로 직접 업데이트
 bash .vendor/stage-pilot/bootstrap/update.sh --repo-url https://github.com/genichin/stage-pilot.git .
 

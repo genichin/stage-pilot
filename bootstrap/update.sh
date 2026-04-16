@@ -13,8 +13,11 @@ Options:
                       (default: https://github.com/genichin/stage-pilot.git)
   --branch <name>     Upstream branch to sync (default: main)
   --prefix <path>     Subtree prefix path (default: .vendor/stage-pilot)
+  --overwrite         Overwrite conflicts during install (same as --policy replace).
+                      (default behavior)
+  --no-overwrite      Preserve host files on conflicts (same as --policy preserve).
   --policy <name>     install.sh conflict policy: replace|preserve|fail
-                      (default: preserve)
+                      (default: replace)
   --skip-install      Only update subtree. Do not run install.sh.
   -h, --help          Show this help message.
 
@@ -45,7 +48,7 @@ REMOTE_NAME="stage-pilot"
 REPO_URL="https://github.com/genichin/stage-pilot.git"
 BRANCH="main"
 PREFIX=".vendor/stage-pilot"
-POLICY="preserve"
+POLICY="replace"
 SKIP_INSTALL=0
 ARGS=()
 
@@ -73,6 +76,12 @@ while [ "$#" -gt 0 ]; do
       [ "$#" -ge 2 ] || fail "--prefix requires a value"
       PREFIX="$2"
       shift
+      ;;
+    --overwrite)
+      POLICY="replace"
+      ;;
+    --no-overwrite)
+      POLICY="preserve"
       ;;
     --policy)
       [ "$#" -ge 2 ] || fail "--policy requires a value"
