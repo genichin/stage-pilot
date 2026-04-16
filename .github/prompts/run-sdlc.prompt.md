@@ -27,14 +27,23 @@ Follow all rules below.
    - Verification: docs/sdlc/verification/ver-xyz_*.verification.md
    - Release: docs/sdlc/release/rel-xyz_*.release.md
    - Operations: docs/sdlc/operations/ops-xyz_*.operations.md
-   - If any stage document is missing, stop immediately and report the missing document plus the required creation action.
+   - If the Discovery document is missing, stop immediately and report the missing document plus the required creation action.
+   - If a downstream stage document is missing when moving to that stage, create its draft first, then continue review/confirm.
 5. Sequential execution rules:
    - Always start from Discovery.
    - If a document is already `confirmed`, pass it and move to the next stage.
    - If a document is `draft`, first normalize it using review rules, then attempt confirmation using confirm rules.
    - If confirmation succeeds, move to the next stage.
+   - When moving to the next stage, if that stage document does not exist, generate a draft for that stage and continue from the generated draft.
 6. Reuse existing review/confirm rules:
    - Follow existing prompt criteria by stage:
+     - Draft creation mapping:
+       - Missing Planning -> /planning-draft using dcy-xyz
+       - Missing Design -> /design-draft using pln-xyz
+       - Missing Implementation -> /implementation-draft using dsn-xyz
+       - Missing Verification -> /verification-draft using imp-xyz
+       - Missing Release -> /release-draft using ver-xyz
+       - Missing Operations -> /operation-draft using rel-xyz
      - /discovery-review + /discovery-confirm
      - /planning-review + /planning-confirm
      - /design-review + /design-confirm
@@ -59,9 +68,11 @@ Follow all rules below.
    - On rerun, skip already confirmed stages and continue from the next unconfirmed stage.
 10. Next-stage refinement rules:
    - After confirming a stage, if the next stage document is draft, first refine upstream input path linkage and key field consistency, then start review.
+   - If the next stage document does not exist, create it first using the matching stage draft prompt, then refine upstream input path linkage and key field consistency before starting review.
    - Do not fill unsupported definitive values.
 11. Safety rules:
-   - Do not create new related documents. (Use /new-sdlc or each stage draft prompt for creation.)
+   - Do not create a missing Discovery document automatically.
+   - Only create missing downstream stage documents that belong to the same shared sequence number.
    - Do not force confirmation by deleting blocking items.
 
 Execution procedure:
@@ -69,6 +80,8 @@ Execution procedure:
 2. Extract `xyz` and locate all 7 stage documents.
 3. Iterate sequentially from Discovery:
    - Check file existence
+   - If Discovery is missing: stop/report
+   - If downstream stage is missing: create draft using the matching stage draft prompt
    - Check status
    - If confirmed: skip
    - If draft: review normalization -> confirmation attempt
@@ -79,6 +92,7 @@ Final response format:
 1. Input summary
 2. Common sequence number and target file paths
 3. Stage-by-stage processing result (skip/confirmed/stopped)
+   - Include draft-created status where applicable
 4. Stop details (if stopped)
    - Stopped stage
    - Reason for non-approval
@@ -86,6 +100,7 @@ Final response format:
 5. Completion summary (if completed)
    - Whether all stages are confirmed
    - List of documents confirmed in this run
+   - List of drafts created in this run
 6. Next action
    - Restart command or follow-up work
 
