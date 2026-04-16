@@ -92,6 +92,26 @@ bash .vendor/stage-pilot/bootstrap/update.sh --skip-install .
 5. Verification: `ver-001`
 6. Release: `rel-001`
 
+### 언제 새 Discovery를 만드는가
+
+운영 중 문제를 발견했을 때는 먼저 `/operation-triage`로 분류한 뒤 아래 기준으로 판단한다.
+
+| operation-triage 판정 결과 | 상황 | 새 Discovery 필요 여부 | 권장 처리 |
+|---|---|---:|---|
+| 구현 문제 | 기존 요구사항/설계/검증 기준은 있었는데 구현이 어긋남, 그리고 관련 문서가 `confirmed` 이후 상태임 | 필요 | corrective change용 Discovery를 새로 만들고 Planning부터 다시 진행 |
+| 구현 문제 | 관련 문서가 모두 `draft`이고 기존 범위 안에서 수정 가능 | 불필요 | 기존 Discovery/Design/Implementation/Verification 문서에 흡수 |
+| 설계·요구사항 누락 | 기능은 있었지만 예외 시나리오, 비기능 요구, 운영 리스크가 빠짐 | 필요 | 누락 요구를 위한 새 Discovery 생성 |
+| 신규 범위 | 기존 SDLC 문서에 실질적으로 없는 기능/정책/요구 | 필요 | 새 Discovery 생성 |
+| 운영 보완만 필요 | 코드/요구 변경 없이 모니터링, 런북, 공지, 절차만 보완 | 불필요 | Operations 문서 보강 |
+| 판단 보류 | 관련 문서 부족, 근거 상충, 재현 불충분 | 보류 | 정보 보강 후 `/operation-triage` 재실행 |
+| Hotfix 필요 | 서비스 중단, 데이터 손실, 보안 영향 등 긴급 대응 우선 | 필요 | Hotfix로 즉시 대응 후 후속 Discovery 생성 및 Postmortem 환류 |
+
+짧은 판단 기준:
+
+1. 완료된 SDLC 결과물을 바꾸는 수정이면 새 Discovery를 만든다.
+2. 아직 draft 단계 문서 보정이면 기존 문서에 흡수한다.
+3. 운영 문서 보완만 하면 되면 새 Discovery는 만들지 않는다.
+
 ### 참고 파일
 
 1. 시작 가이드: `.github/START-HERE.md`
