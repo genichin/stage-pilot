@@ -69,7 +69,7 @@ bash .vendor/stage-pilot/bootstrap/update.sh --skip-install .
 /run-sdlc dcy-001 홍길동
 /discovery-draft 결제 실패 알림 정책을 도입한다
 /discovery-review dcy-001
-/discovery-confirm dcy-001
+/confirm-discovery sdlc-001
 
 # Planning
 /planning-draft dcy-001
