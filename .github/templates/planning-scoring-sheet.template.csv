@@ -1,4 +1,0 @@
-item_id,work_item,business_value,time_criticality,rr_oe,job_size,reach,impact,confidence,effort,method,wsjf_score,rice_score,selected_score,priority
-P-001,Example work item A,8,7,6,5,1000,2,80,8,WSJF,=(C2+D2+E2)/F2,=(G2*H2*I2)/J2,=IF(K2="WSJF",L2,M2),=
-P-002,Example work item B,6,8,5,3,3000,1,70,10,RICE,=(C3+D3+E3)/F3,=(G3*H3*I3)/J3,=IF(K3="WSJF",L3,M3),=
-P-003,Example work item C,9,6,8,8,500,3,90,5,WSJF,=(C4+D4+E4)/F4,=(G4*H4*I4)/J4,=IF(K4="WSJF",L4,M4),=

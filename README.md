@@ -139,3 +139,4 @@ bash .vendor/stage-pilot/bootstrap/update.sh --skip-install .
 3. 프롬프트 정의: `.github/prompts/`
 4. 템플릿: `.github/templates/`
 5. Operations 템플릿: `.github/templates/operations-note.template.md`
+6. 플레이스홀더 가이드: `.github/instructions/placeholder-guide.md`
