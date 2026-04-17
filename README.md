@@ -66,9 +66,7 @@ bash .vendor/stage-pilot/bootstrap/update.sh --skip-install .
 ```text
 # Discovery
 /new-sdlc 결제 실패 알림 정책을 도입한다
-/run-sdlc dcy-001 홍길동
-/discovery-draft 결제 실패 알림 정책을 도입한다
-/discovery-review dcy-001
+/review-discovery sdlc-001
 /confirm-discovery sdlc-001
 
 # Planning
@@ -77,7 +75,7 @@ bash .vendor/stage-pilot/bootstrap/update.sh --skip-install .
 /confirm-planning sdlc-001
 
 # Design
-/design-draft pln-001
+/draft-design sdlc-001
 /design-review dsn-001
 /design-confirm dsn-001
 

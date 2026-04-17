@@ -175,6 +175,61 @@
 
 ---
 
+## Design 전용 플레이스홀더 (`3_design.md`)
+
+### A. 자동 치환 (Auto)
+
+| 키 | 치환 값 | 사용 위치 |
+|---|---|---|
+| `{{PLANNING_PATH}}` | `docs/sdlc/<CYCLE_ID>/2_planning.md` | `#0`, `#8` |
+
+### B. AI 추론 치환 (Infer)
+
+| 키 | 설명 | 위치 |
+|---|---|---|
+| `{{DESIGN_ISSUE_PURPOSE}}` | Planning 이슈명과 핵심 목적 요약 | `#1` |
+| `{{DESIGN_TASK_TITLE_N}}` | Planning `#2`에서 이식한 태스크 제목 | `#1` |
+| `{{DESIGN_TASK_REF_N}}` | Planning `#2`에서 이식한 참조 요구사항 | `#1` |
+| `{{DESIGN_DEFERRED_ITEM_N}}` | Planning `#7`에서 Deferred 처리된 오픈 질문 | `#1` |
+| `{{ARCH_OVERVIEW}}` | 전체 아키텍처/구조 개요 | `#2` |
+| `{{COMPONENT_N_NAME}}` | 주요 컴포넌트 이름 | `#2` |
+| `{{COMPONENT_N_ROLE}}` | 컴포넌트 역할 | `#2` |
+| `{{COMPONENT_N_SCOPE}}` | 컴포넌트 영향 범위 | `#2` |
+| `{{DATA_FLOW_N}}` | 데이터 흐름 단계 | `#2` |
+| `{{DESIGN_DETAIL_N}}` | 태스크별 설계 방향 | `#3` |
+| `{{DESIGN_TARGET_N}}` | 변경 대상 파일/함수/설정 | `#3` |
+| `{{DESIGN_IO_N}}` | 입력/출력 또는 사이드이펙트 | `#3` |
+| `{{DESIGN_EDGE_N}}` | 예외/엣지 케이스 | `#3` |
+| `{{INTERFACE_N}}` | API/함수 시그니처 | `#4` |
+| `{{SCHEMA_N}}` | 데이터 스키마/포맷 | `#4` |
+| `{{EVENT_N}}` | 이벤트/메시지 | `#4` |
+| `{{SEC_INJECTION}}` ~ `{{SEC_OTHER}}` | 보안 항목 해당 여부 | `#5` |
+| `{{SEC_INJECTION_ACTION}}` ~ `{{SEC_OTHER_ACTION}}` | 보안 대응 방안 | `#5` |
+| `{{DESIGN_RISK_LEVEL_N}}` | Design 리스크 등급 | `#6` |
+| `{{DESIGN_RISK_N}}` | Design 리스크 내용 | `#6` |
+| `{{DESIGN_MITIGATION_N}}` | 리스크 완화 방안 | `#6` |
+| `{{DESIGN_ASSUMPTION_N}}` | Design 단계 가정 | `#6` |
+| `{{DESIGN_OPEN_QUESTION_N}}` | Design 오픈 질문 | `#6` |
+| `{{DESIGN_OQ_STATUS_N}}` | 오픈 질문 상태 | `#6` |
+| `{{DESIGN_OQ_ACTION_N}}` | 오픈 질문 처리 방안 | `#6` |
+| `{{DESIGN_OQ_EXIT_N}}` | 오픈 질문 종료 조건 | `#6` |
+| `{{CHECK_DESIGN_COMPLETE}}` | 설계 완성 기준 | `#7` |
+| `{{CHECK_INTERFACE}}` | 인터페이스 확정 기준 | `#7` |
+| `{{CHECK_SECURITY}}` | 보안 점검 완료 기준 | `#7` |
+
+### C. 사용자 결정 필요 (Decide)
+
+| 키 | 설명 | 위치 |
+|---|---|---|
+| `{{DESIGN_TASK_OWNER_N}}` | 태스크 담당자 | `#1` |
+| `{{FREEZE_HANDOFF_DECISION}}` | Implementation 진행 가능 여부 | `#10` |
+| `{{FREEZE_HANDOFF_RATIONALE}}` | Handoff Decision 판단 근거 | `#10` |
+| `{{READY_FOR_IMPLEMENTATION}}` | `true` / `false` | `#10` |
+| `{{CONFIRMED_BY}}` | Freeze 확정 담당자 이름 | `#10` |
+| `{{CONFIRMED_AT_KST}}` | Freeze 확정 시각 (KST) | `#10` |
+
+---
+
 ## 4. 참조 위치 요약
 
 | 파일 | 역할 | 관련 플레이스홀더 |
@@ -182,5 +237,7 @@
 | `.github/prompts/new-sdlc.prompt.md` | 주기 생성, 자동/추론 치환 실행 | A, B 전체 |
 | `.github/prompts/review-discovery.prompt.md` | 검토, `_DECISION` 처리, 사용자 결정 항목 정리 | B (`_DECISION`), C |
 | `.github/prompts/draft-planning.prompt.md` | Planning 초안 생성, Discovery 내용 이식 | A, B 전체 (Planning) |
+| `.github/prompts/draft-design.prompt.md` | Design 초안 생성, Planning 내용 이식 | A, B 전체 (Design) |
 | `.github/templates/sdlc/1_discovery.md` | Discovery 원본 템플릿 | A, B, C 전체 |
 | `.github/templates/sdlc/2_planning.md` | Planning 원본 템플릿 | A, B, C 전체 (Planning) |
+| `.github/templates/sdlc/3_design.md` | Design 원본 템플릿 | A, B, C 전체 (Design) |
