@@ -76,8 +76,18 @@ Discovery 초안 작성 원칙:
 2. 다음 번호를 3자리 zero-pad로 계산한다. 예: `001`, `002`, ...
 3. 오늘 날짜를 `YYYYMMDD`로 구한다.
 4. `CYCLE_ID = sdlc-<id>_<YYYYMMDD>_<topic-slug>`를 만든다.
-5. `docs/sdlc/<CYCLE_ID>/` 폴더를 생성한다.
-6. `.github/templates/sdlc/1_discovery.md`를 기반으로 `docs/sdlc/<CYCLE_ID>/1_discovery.md`를 생성한다.
+5. 저장소 현황 탐색 — `# 3 문제점 요약`의 "현재 상태" 기술 근거를 수집한다.
+   - 이슈 원문에서 핵심 키워드(기능명, 모듈명, 동사)를 추출한다.
+   - 키워드를 기반으로 저장소에서 관련 파일·디렉터리·함수를 탐색한다.
+   - 탐색 범위: 소스 파일(`.ts`, `.js`, `.py`, `.go`, `.java` 등), 설정 파일, 기존 문서(`docs/`). 테스트 파일과 의존성 잠금 파일(`package-lock.json`, `.lock`)은 제외한다.
+   - 탐색 결과에서 아래 항목을 추출한다.
+     - 관련 파일 경로 목록 (최대 10개, 관련성 높은 순)
+     - 현재 구현 방식 요약 (함수명·클래스명·주요 로직 1~3줄)
+     - 현재 상태에서 이슈 원문이 지적하는 문제가 실제로 존재하는지 여부
+   - 관련 파일을 찾지 못한 경우: "관련 파일 없음 — 신규 기능으로 추정"으로 기록하고 계속 진행한다.
+   - 탐색 결과는 `1_discovery.md` 작성 시 `#3` 현재 상태 기술에만 반영한다. 다른 섹션에는 사용하지 않는다.
+6. `docs/sdlc/<CYCLE_ID>/` 폴더를 생성한다.
+7. `.github/templates/sdlc/1_discovery.md`를 기반으로 `docs/sdlc/<CYCLE_ID>/1_discovery.md`를 생성한다.
 7. [`.github/templates/sdlc/index.md`](../../.github/templates/sdlc/index.md)를 기반으로 `docs/sdlc/<CYCLE_ID>/index.md`를 생성한다.
 
 8. `.github/templates/sdlc/summary.md`가 있으면 이를 기반으로 `docs/sdlc/<CYCLE_ID>/summary.md`를 생성한다. 템플릿이 없으면 아래 기본 골격으로 생성한다.
@@ -99,7 +109,7 @@ Discovery 초안 작성 원칙:
   - [Index](./index.md)
   ```
 
-9. 생성 파일들에서 아래 플레이스홀더를 우선 치환한다.
+11. 생성 파일들에서 아래 플레이스홀더를 우선 치환한다.
    - `{{DOC_STATUS:draft|review|confirmed}}` -> `draft`
    - `{{CYCLE_ID:sdlc-<3자리>_<YYYYMMDD>_<topic-slug>}}` -> 계산한 `CYCLE_ID`
   - `{{CYCLE_ID}}` -> 계산한 `CYCLE_ID`
@@ -112,9 +122,9 @@ Discovery 초안 작성 원칙:
    - `{{OUTPUT_PATH}}` -> 생성 파일 경로
    - `{{FILE_RESULT:생성|갱신|미생성}}` -> `생성`
   - `{{SUMMARY_STATUS:draft|review|confirmed}}` -> `draft`
-10. `1_discovery.md`에서는 위 규칙에 따라 추론 가능한 플레이스홀더를 적극적으로 실제 내용으로 치환한다.
-11. 추론 불가능하거나 사용자 확인이 필요한 항목만 플레이스홀더로 남긴다.
-12. `docs/sdlc/index.md` 전역 인덱스를 갱신한다.
+12. `1_discovery.md`에서는 위 규칙에 따라 추론 가능한 플레이스홀더를 적극적으로 실제 내용으로 치환한다. 이때 5단계에서 수집한 저장소 현황 탐색 결과를 `# 3 문제점 요약`의 현재 상태 기술에 반영한다.
+13. 추론 불가능하거나 사용자 확인이 필요한 항목만 플레이스홀더로 남긴다.
+14. `docs/sdlc/index.md` 전역 인덱스를 갱신한다.
     - 파일이 없으면 아래 초기 골격으로 신규 생성한다.
 
       ```md
@@ -152,6 +162,7 @@ Discovery 초안 작성 원칙:
 - 생성한 폴더 경로
 - 생성한 파일 경로 목록 (`1_discovery.md`, `index.md`, `summary.md`)
 - `docs/sdlc/index.md` 갱신 결과 (신규 생성 또는 갱신된 행 내용)
+- **저장소 현황 탐색 결과**: 발견된 관련 파일 목록과 현재 상태 요약 (또는 "관련 파일 없음 — 신규 기능으로 추정")
 - 자동으로 채운 Discovery 핵심 섹션 요약
 - 사용자 확인이 필요해 플레이스홀더로 남긴 항목 요약
 
