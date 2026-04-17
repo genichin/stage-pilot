@@ -72,8 +72,8 @@ bash .vendor/stage-pilot/bootstrap/update.sh --skip-install .
 /confirm-discovery sdlc-001
 
 # Planning
-/planning-draft dcy-001
-/planning-review pln-001
+/draft-planning sdlc-001
+/review-planning sdlc-001
 /planning-confirm pln-001
 
 # Design

@@ -105,10 +105,82 @@
 
 ---
 
+---
+
+## Planning 전용 플레이스홀더 (`2_planning.md`)
+
+### A. 자동 치환 (Auto)
+
+| 키 | 치환 값 | 사용 위치 |
+|---|---|---|
+| `{{DISCOVERY_PATH}}` | `docs/sdlc/<CYCLE_ID>/1_discovery.md` | `#0`, `#9` |
+
+### B. AI 추론 치환 (Infer)
+
+| 키 | 설명 | 위치 |
+|---|---|---|
+| `{{PLANNING_ISSUE_PURPOSE}}` | Discovery 이슈명과 핵심 목적 요약 | `#1` |
+| `{{PLANNING_IN_SCOPE_1~2}}` | Discovery `#5`에서 이식한 In Scope | `#1` |
+| `{{PLANNING_OUT_OF_SCOPE_1~2}}` | Discovery `#5`에서 이식한 Out of Scope | `#1` |
+| `{{PLANNING_FR_1~4}}` | Discovery `#5` FR 요약 | `#1` |
+| `{{PLANNING_NFR_1~2}}` | Discovery `#5` NFR 요약 | `#1` |
+| `{{DEFERRED_ITEM_1~2}}` | Discovery `#6`에서 Deferred 처리된 오픈 질문 | `#1` |
+| `{{TASK_TITLE_N}}` | FR/NFR 기반 태스크 제목 | `#2` |
+| `{{TASK_TYPE_N}}` | 태스크 유형 (`개발\|문서\|검토\|설계\|운영`) | `#2` |
+| `{{TASK_REF_N}}` | 참조 요구사항 ID (예: `FR-1`) | `#2` |
+| `{{TASK_DEP_N}}` | 의존 태스크 ID 또는 `-` | `#2` |
+| `{{TASK_DOD_N}}` | 태스크 완료 조건 | `#2` |
+| `{{EFFORT_N}}` | 추정 공수 (숫자 또는 범위) | `#3` |
+| `{{EFFORT_UNIT}}` | 공수 단위 (`SP\|시간\|일`) | `#3` |
+| `{{EFFORT_NOTE_N}}` | 공수 추정 비고 | `#3` |
+| `{{TOTAL_EFFORT}}` | 총 추정 공수 | `#3` |
+| `{{EFFORT_CONFIDENCE}}` | 추정 신뢰도 (`High\|Medium\|Low`) | `#3` |
+| `{{EFFORT_BASIS}}` | 추정 근거 | `#3` |
+| `{{MILESTONE_N_NAME}}` | 마일스톤 이름 | `#4` |
+| `{{MILESTONE_N_TASKS}}` | 마일스톤 포함 태스크 목록 | `#4` |
+| `{{MILESTONE_N_DONE}}` | 마일스톤 완료 조건 | `#4` |
+| `{{ITERATION_UNIT}}` | 이터레이션 단위 | `#4` |
+| `{{ITERATION_N_TASKS}}` | 이터레이션 N 포함 태스크 | `#4` |
+| `{{TASK_DEPENDENCY_N}}` | 태스크 간 의존 관계 설명 | `#5` |
+| `{{EXTERNAL_DEP_N}}` | 외부 의존성 항목 | `#5` |
+| `{{TECH_CONSTRAINT_N}}` | 기술/환경 제약 | `#5` |
+| `{{VERIFY_CRITERIA_N}}` | 검증 대상 성공 기준 (Discovery S-N 요약) | `#6` |
+| `{{VERIFY_METHOD_N}}` | 검증 방법 초안 | `#6` |
+| `{{PLAN_RISK_LEVEL_N}}` | Planning 리스크 등급 | `#7` |
+| `{{PLAN_RISK_N}}` | Planning 리스크 내용 | `#7` |
+| `{{PLAN_MITIGATION_N}}` | 리스크 완화 방안 | `#7` |
+| `{{PLAN_ASSUMPTION_N}}` | Planning 단계 가정 | `#7` |
+| `{{PLAN_OPEN_QUESTION_N}}` | Planning 오픈 질문 | `#7` |
+| `{{PLAN_OQ_STATUS_N}}` | 오픈 질문 상태 | `#7` |
+| `{{PLAN_OQ_ACTION_N}}` | 오픈 질문 처리 방안 | `#7` |
+| `{{PLAN_OQ_EXIT_N}}` | 오픈 질문 종료 조건 | `#7` |
+| `{{CHECK_TASKS_CRITERIA}}` | 태스크 확정 기준 | `#8` |
+| `{{CHECK_EFFORT_CRITERIA}}` | 공수 추정 확정 기준 | `#8` |
+| `{{CHECK_SCHEDULE_CRITERIA}}` | 일정 확정 기준 | `#8` |
+| `{{CHECK_DEP_CRITERIA}}` | 외부 의존성 해소 기준 | `#8` |
+
+### C. 사용자 결정 필요 (Decide)
+
+| 키 | 설명 | 위치 |
+|---|---|---|
+| `{{TASK_OWNER_N}}` | 태스크 담당자 | `#2` |
+| `{{MILESTONE_N_DATE}}` | 마일스톤 목표 날짜 | `#4` |
+| `{{ITERATION_N_PERIOD}}` | 이터레이션 날짜 범위 | `#4` |
+| `{{VERIFY_OWNER_N}}` | 검증 담당자 | `#6` |
+| `{{FREEZE_HANDOFF_DECISION}}` | Design 진행 가능 여부 | `#11` |
+| `{{FREEZE_HANDOFF_RATIONALE}}` | Handoff Decision 판단 근거 | `#11` |
+| `{{READY_FOR_DESIGN}}` | `true` / `false` | `#11` |
+| `{{CONFIRMED_BY}}` | Freeze 확정 담당자 이름 | `#11` |
+| `{{CONFIRMED_AT_KST}}` | Freeze 확정 시각 (KST) | `#11` |
+
+---
+
 ## 4. 참조 위치 요약
 
 | 파일 | 역할 | 관련 플레이스홀더 |
 |---|---|---|
 | `.github/prompts/new-sdlc.prompt.md` | 주기 생성, 자동/추론 치환 실행 | A, B 전체 |
 | `.github/prompts/review-discovery.prompt.md` | 검토, `_DECISION` 처리, 사용자 결정 항목 정리 | B (`_DECISION`), C |
+| `.github/prompts/draft-planning.prompt.md` | Planning 초안 생성, Discovery 내용 이식 | A, B 전체 (Planning) |
 | `.github/templates/sdlc/1_discovery.md` | Discovery 원본 템플릿 | A, B, C 전체 |
+| `.github/templates/sdlc/2_planning.md` | Planning 원본 템플릿 | A, B, C 전체 (Planning) |
