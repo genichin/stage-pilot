@@ -76,7 +76,7 @@ bash .vendor/stage-pilot/bootstrap/update.sh --skip-install .
 
 # Design
 /draft-design sdlc-001
-/design-review dsn-001
+/review-design sdlc-001
 /design-confirm dsn-001
 
 # Implementation
@@ -138,3 +138,4 @@ bash .vendor/stage-pilot/bootstrap/update.sh --skip-install .
 4. 템플릿: `.github/templates/`
 5. Operations 템플릿: `.github/templates/operations-note.template.md`
 6. 플레이스홀더 가이드: `.github/instructions/placeholder-guide.md`
+
