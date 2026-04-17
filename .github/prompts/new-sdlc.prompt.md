@@ -78,20 +78,7 @@ Discovery 초안 작성 원칙:
 4. `CYCLE_ID = sdlc-<id>_<YYYYMMDD>_<topic-slug>`를 만든다.
 5. `docs/sdlc/<CYCLE_ID>/` 폴더를 생성한다.
 6. `.github/templates/sdlc/1_discovery.md`를 기반으로 `docs/sdlc/<CYCLE_ID>/1_discovery.md`를 생성한다.
-7. `.github/templates/sdlc/index.md`가 있으면 이를 기반으로 `docs/sdlc/<CYCLE_ID>/index.md`를 생성한다. 템플릿이 없으면 아래 기본 골격으로 생성한다.
-
-  ```md
-  # {{CYCLE_ID}}
-
-  - 1. [Discovery](./1_discovery.md)
-  - 2. [Planning](./2_planning.md)
-  - 3. [Design](./3_design.md)
-  - 4. [Implementation](./4_implementation.md)
-  - 5. [Verification](./5_verification.md)
-  - 6. [Release](./6_release.md)
-  - 7. [Operations](./7_operations.md)
-  - [Summary](./summary.md)
-  ```
+7. [`.github/templates/sdlc/index.md`](../../.github/templates/sdlc/index.md)를 기반으로 `docs/sdlc/<CYCLE_ID>/index.md`를 생성한다.
 
 8. `.github/templates/sdlc/summary.md`가 있으면 이를 기반으로 `docs/sdlc/<CYCLE_ID>/summary.md`를 생성한다. 템플릿이 없으면 아래 기본 골격으로 생성한다.
 

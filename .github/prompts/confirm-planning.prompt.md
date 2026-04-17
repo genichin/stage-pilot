@@ -1,14 +1,14 @@
 ---
-name: "confirm-discovery"
-description: "Approve a Discovery document and mark it as confirmed, ready for Planning"
-argument-hint: "예: sdlc-001 또는 docs/sdlc/sdlc-001_20260417_stage-pilot/1_discovery.md"
+name: "confirm-planning"
+description: "Approve a Planning document and mark it as confirmed, ready for Design"
+argument-hint: "예: sdlc-001 또는 docs/sdlc/sdlc-001_20260417_stage-pilot/2_planning.md"
 agent: "agent"
 ---
-SDLC Discovery 문서를 최종 승인 처리한다.
+SDLC Planning 문서를 최종 승인 처리한다.
 
 목표:
-- `1_discovery.md`의 상태를 `confirmed`로 변경한다.
-- `# 11. Discovery Freeze`의 `Handoff Decision`을 `승인`으로, `Ready for Planning`을 `true`로 변경한다.
+- `2_planning.md`의 상태를 `confirmed`로 변경한다.
+- `# 11. Planning Freeze`의 `Handoff Decision`을 `승인`으로, `Ready for Design`을 `true`로 변경한다.
 - `마지막 갱신 시각(KST)`과 승인 시각(`CONFIRMED_AT_KST`)을 현재 시각으로 채운다.
 - 승인 불가 조건이 있으면 문서를 변경하지 않고 이유를 보고한다.
 
@@ -45,7 +45,7 @@ SDLC Discovery 문서를 최종 승인 처리한다.
 
 ### 1. 입력 해석
 
-- 사용자가 제공한 값이 CYCLE_ID(예: `sdlc-001`)이면 `docs/sdlc/` 아래에서 해당 패턴으로 시작하는 폴더를 찾아 `1_discovery.md` 경로를 확정한다.
+- 사용자가 제공한 값이 CYCLE_ID(예: `sdlc-001`)이면 `docs/sdlc/` 아래에서 해당 패턴으로 시작하는 폴더를 찾아 `2_planning.md` 경로를 확정한다.
 - 사용자가 파일 경로를 직접 제공했으면 해당 경로를 사용한다.
 - 파일이 존재하지 않으면 경로를 재확인하도록 사용자에게 피드백하고 중단한다.
 
@@ -53,8 +53,8 @@ SDLC Discovery 문서를 최종 승인 처리한다.
 
 문서 전체의 `{{...}}` 플레이스홀더를 스캔해 A·B·C 유형으로 분류한다.
 
-- **A 유형**: 목록만 기록한다. 3단계에서 자동으로 채운다.
-- **B 유형**: 섹션 11에서 실질 값을 읽어 치환 가능한지 확인한다. 가능하면 3단계에서 함께 처리한다.
+- **A 유형**: 목록만 기록한다. 4단계에서 자동으로 채운다.
+- **B 유형**: 섹션 11에서 실질 값을 읽어 치환 가능한지 확인한다. 가능하면 4단계에서 함께 처리한다.
 - **C 유형**: 목록을 보고하고 승인을 보류한다.
 
 ### 3. 승인 가능 여부 확인 (사전 게이트 검사)
@@ -65,9 +65,9 @@ SDLC Discovery 문서를 최종 승인 처리한다.
 |------|-----------|
 | 문서 상태 | `confirmed`가 아닌 상태(`draft` 또는 `review`)여야 한다. 이미 `confirmed`면 중단한다. |
 | 실질 미해소 플레이스홀더 (C 유형) | C 유형 플레이스홀더가 0개여야 한다. |
-| 오픈 질문 미해소 | `# 6` 오픈 질문 목록에 `상태: Open`인 항목이 없어야 한다. |
-| 필수 섹션 미완성 | `# 5`, `# 7`, `# 8`, `# 10`, `# 11` 섹션이 존재하고 내용이 채워져 있어야 한다. |
-| Ready for Planning 사전 설정 | `Ready for Planning: false`이거나 아직 갱신 전인 경우만 승인 처리 대상이다. 이미 `true`이면 이미 처리된 문서임을 알린다. |
+| 오픈 질문 미해소 | `# 7` 오픈 질문 목록에 `상태: Open`인 항목이 없어야 한다. |
+| 필수 섹션 미완성 | `# 2`, `# 3`, `# 6`, `# 8`, `# 10`, `# 11` 섹션이 존재하고 내용이 채워져 있어야 한다. |
+| Ready for Design 사전 설정 | `Ready for Design: false`이거나 아직 갱신 전인 경우만 승인 처리 대상이다. 이미 `true`이면 이미 처리된 문서임을 알린다. |
 
 > **예외**: C 유형 플레이스홀더 또는 오픈 질문 미해소만 문제인 경우, 사용자가 명시적으로 `--force`를 표현했으면 해당 항목 목록을 보고하되 승인을 진행한다.
 
@@ -77,11 +77,11 @@ SDLC Discovery 문서를 최종 승인 처리한다.
 
 1. `# 0. 문서 상태`의 `- 상태:` 줄 → `confirmed`로 변경
 2. `# 0. 문서 상태`의 `- 마지막 갱신 시각(KST):` → 현재 시각으로 변경
-3. `# 11. Discovery Freeze`의 `- Handoff Decision:` → `승인`으로 변경
-4. `# 11. Discovery Freeze`의 `- Ready for Planning:` → `true`로 변경
+3. `# 11. Planning Freeze`의 `- Handoff Decision:` → `승인`으로 변경
+4. `# 11. Planning Freeze`의 `- Ready for Design:` → `true`로 변경
 5. **A 유형 플레이스홀더** → 각 자동 채움 값으로 치환
 6. **B 유형 플레이스홀더** → 섹션 11에서 읽은 실질 값으로 치환 (또는 플레이스홀더 제거)
-7. `docs/sdlc/<CYCLE_ID>/index.md`의 Discovery 행 `상태` 열 → `` `confirmed` ``로 변경. 행 형식: `| 1. Discovery | ... | ... |`
+7. `docs/sdlc/<CYCLE_ID>/index.md`의 Planning 행 `상태` 열 → `` `confirmed` ``로 변경. 행 형식: `| 2. Planning | ... | ... |`
 
 ### 5. 결과 보고
 
@@ -91,7 +91,7 @@ SDLC Discovery 문서를 최종 승인 처리한다.
 - **자동 처리된 플레이스홀더 목록** (A·B 유형, 승인 완료 시)
 - **변경된 필드 목록** (승인 완료 시)
 - **미충족 항목 목록** (승인 불가 시): 각 항목에 대한 조치 안내 포함
-- **다음 단계 안내**: 승인 완료 시 Planning 단계(`/planning-draft <CYCLE_ID>`) 실행 안내
+- **다음 단계 안내**: 승인 완료 시 Design 단계(`/draft-design <CYCLE_ID>`) 실행 안내
 
 ---
 
