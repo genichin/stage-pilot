@@ -41,14 +41,9 @@ agent: "agent"
 | Planning | `2_planning.md` | 상태 = `confirmed` 또는 `Ready for Design: true` |
 | Design | `3_design.md` | 상태 = `confirmed` 또는 `Ready for Implementation: true` |
 | Implementation | `4_implementation.md` | 상태 = `confirmed` 또는 `Ready for Verification: true` |
+| Verification | `5_verification.md` | 상태 = `confirmed` 또는 `Ready for Release: true` |
 | Release | `6_release.md` | 상태 = `confirmed` 또는 `Ready for Operations: true` |
 | Operations | `7_operation.md` | 상태 = `confirmed` 또는 `SDLC 주기 완료: true` |
-
-> **참고**: Verification 단계(`5_verification.md`)는 이 파이프라인에서 독립 실행 대상이 아니다.
-> `draft-release` 실행 전 Verification 문서가 `confirmed` 상태인지 확인하며,
-> 미완료 시 사용자에게 Verification을 먼저 완료하도록 안내하고 중단한다.
-> Verification 완료 방법: `/draft-verification <CYCLE_ID>` → `/review-verification <CYCLE_ID>` → `/confirm-verification <CYCLE_ID>`
-> (각각 `.github/prompts/draft-verification.prompt.md`, `review-verification.prompt.md`, `confirm-verification.prompt.md` 참고)
 
 ### 3. 실행 시작 지점 결정
 
@@ -58,8 +53,9 @@ agent: "agent"
 2. Planning
 3. Design
 4. Implementation
-5. Release
-6. Operations
+5. Verification
+6. Release
+7. Operations
 
 모든 단계가 `confirmed`이면 SDLC 주기가 완료되었음을 보고하고 종료한다.
 
@@ -131,12 +127,21 @@ agent: "agent"
 - `confirm-implementation` 실행 시: `APPROVER_NAME`을 `Confirmed By` 값으로 사용한다.
   승인 불가 보고를 받으면 → [블로킹 처리](#블로킹-처리)
 
-#### 4-5. Verification 단계 사전 확인
+#### 4-5. Verification 단계 (`5_verification.md`)
 
-`draft-release` 실행 전, `5_verification.md`가 `confirmed` 상태인지 확인한다.
+`5_verification.md`의 상태에 따라 아래 서브스텝을 실행한다.
 
-- 파일이 없거나 `confirmed`가 아니면 → [블로킹 처리](#블로킹-처리)
-  안내 메시지: "Verification 단계가 완료되지 않았습니다. `.github/prompts/draft-verification.prompt.md` 참고: `/draft-verification <CYCLE_ID>` → `/review-verification <CYCLE_ID>` → `/confirm-verification <CYCLE_ID>` 순서로 먼저 진행해 주세요."
+| 현재 상태 | 실행할 서브스텝 |
+|-----------|----------------|
+| 파일 없음 | ① `draft-verification` → ② `review-verification` → ③ `confirm-verification` |
+| `draft` | ① `review-verification` → ② `confirm-verification` |
+| `review` | ① `confirm-verification` |
+| `confirmed` | 스킵 |
+
+- `draft-verification` 실행 시: Implementation이 `confirmed` 상태인지 확인한다. 아니면 중단.
+- `review-verification` 실행 시: 검토 결과가 **보류(Hold)**이면 → [블로킹 처리](#블로킹-처리)
+- `confirm-verification` 실행 시: `APPROVER_NAME`을 `Confirmed By` 값으로 사용한다.
+  승인 불가 보고를 받으면 → [블로킹 처리](#블로킹-처리)
 
 #### 4-6. Release 단계 (`6_release.md`)
 
@@ -228,6 +233,9 @@ agent: "agent"
 | `run-implementation` | `.github/prompts/run-implementation.prompt.md` |
 | `review-implementation` | `.github/prompts/review-implementation.prompt.md` |
 | `confirm-implementation` | `.github/prompts/confirm-implementation.prompt.md` |
+| `draft-verification` | `.github/prompts/draft-verification.prompt.md` |
+| `review-verification` | `.github/prompts/review-verification.prompt.md` |
+| `confirm-verification` | `.github/prompts/confirm-verification.prompt.md` |
 | `draft-release` | `.github/prompts/draft-release.prompt.md` |
 | `review-release` | `.github/prompts/review-release.prompt.md` |
 | `confirm-release` | `.github/prompts/confirm-release.prompt.md` |
