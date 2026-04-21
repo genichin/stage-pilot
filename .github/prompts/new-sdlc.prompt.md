@@ -10,11 +10,11 @@ agent: "agent"
 - `docs/sdlc/sdlc-<id>_<YYYYMMDD>_<topic-slug>/` 폴더를 생성한다.
 - 위 폴더에 `1_discovery.md` draft 문서를 생성한다.
 - 위 폴더에 `index.md`, `summary.md` draft 문서를 함께 생성한다.
-- `1_discovery.md`는 템플릿 복사본이 아니라, 입력 문장을 바탕으로 기본 내용을 가능한 한 채운 초안이어야 한다.
+- `1_discovery.md`는 `.github/templates/sdlc/1_discovery.md`를 기반으로, 입력 문장과 현재 구현 상태를 바탕으로 기본 내용을 가능한 한 채운 초안이어야 한다.
 
 입력 해석:
 - 사용자가 `/new-sdlc ...` 뒤에 입력한 전체 텍스트를 이슈 원문으로 사용한다.
-- 이슈명은 원문을 유지한다.
+- 이슈명은 원문과 현재 구현 상태를 확인하여 한 문장으로 요약한다.
 - `topic-slug`는 이슈 원문을 소문자 kebab-case로 변환해 만든다.
 - slug 규칙:
   - 영문/숫자 외 문자는 `-`로 치환
