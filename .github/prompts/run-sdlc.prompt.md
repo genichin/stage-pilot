@@ -90,7 +90,7 @@ agent: "agent"
 | `confirmed` | 스킵 |
 
 - `draft-planning` 실행 시: Discovery가 `confirmed` 상태인지 확인한다. 아니면 중단.
-- `review-planning` 실행 시: 검토 결과가 **보류(Hold)**이면 → [블로킹 처리](#블로킹-처리)
+- `review-planning` 실행 시: {{TASK_OWNER_N}}는 copilot으로 자동으로 채우고, {{MILESTONE_N_DATE}}, {{ITERATION_N_PERIOD}}는 현재 날짜로 채운다. 검토 결과가 **보류(Hold)**이면 → [블로킹 처리](#블로킹-처리)
 - `confirm-planning` 실행 시: `APPROVER_NAME`을 `Confirmed By` 값으로 사용한다.
   승인 불가 보고를 받으면 → [블로킹 처리](#블로킹-처리)
 
