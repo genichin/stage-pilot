@@ -27,8 +27,8 @@ This skill converts a Discovery document into one or more requirement documents 
 - 대상 Discovery 문서 본문
 - `docs/project-structure.md` (존재하는 경우)
 - `docs/runtime-flows.md` (존재하는 경우)
-- `docs/srs/index.md`
-- `docs/srs/req-template.md`
+- `.github/templates/srs/index.md`
+- `.github/templates/srs/req-template.md`
 
 # Core Rules
 
