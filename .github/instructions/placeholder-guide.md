@@ -81,6 +81,50 @@
 - `{{TECH_STACK_BULLETS}}`
 - `{{PRIMARY_RUNTIME}}`
 - `{{PRIMARY_ENTRYPOINT_BULLETS}}`
+- `interfaces.contracts[*]`
+- `data_model.entities[*]`
+
+### 3.0.1 선택 cross-cutting 템플릿
+
+대상 경로:
+
+- `.github/templates/interface-contract.md`
+- `.github/templates/data-model.md`
+
+처리 원칙:
+
+- 이 문서들은 optional cross-cutting reference다.
+- active unit의 source of truth를 대체하지 않고, 여러 REQ와 batch에 공통으로 반복되는 계약 정보를 모아 둔다.
+- `bootstrap-baseline`은 seed의 `interfaces`와 `data_model` 섹션을 우선 읽고, 값이 없으면 `runtime`, `structure`, `notes`를 바탕으로 기본 초안을 구체적으로 유도한다.
+- baseline 수준의 변경이 있을 때만 갱신하고, REQ별 acceptance criteria를 그대로 복사하지 않는다.
+
+주요 키:
+
+- `{{BASELINE_MODE}}`
+- `{{BASELINE_SEED_PATH}}`
+- `{{PROJECT_SUMMARY}}`
+- `{{PRIMARY_DOMAIN}}`
+- `{{PRIMARY_RUNTIME}}`
+- `{{INTERFACE_NAME_1}}`
+- `{{INTERFACE_PURPOSE_1}}`
+- `{{INTERFACE_SUMMARY_BULLETS}}`
+- `{{INTERFACE_INPUTS_1}}`
+- `{{INTERFACE_OUTPUTS_1}}`
+- `{{INTERFACE_ERRORS_1}}`
+- `{{INTERFACE_COMPATIBILITY_1}}`
+- `{{INTERFACE_SHARED_CONSTRAINTS_BULLETS}}`
+- `{{INTERFACE_CURRENT_GAPS_BULLETS}}`
+- `{{PERSISTENCE_BACKEND}}`
+- `{{ENTITY_NAME_1}}`
+- `{{ENTITY_PURPOSE_1}}`
+- `{{ENTITY_SOURCE_1}}`
+- `{{ENTITY_LIFECYCLE_1}}`
+- `{{MODEL_SUMMARY_BULLETS}}`
+- `{{ENTITY_FIELDS_1}}`
+- `{{ENTITY_RELATIONSHIPS_1}}`
+- `{{CONSISTENCY_RULE_BULLETS}}`
+- `{{PERSISTENCE_NOTES_BULLETS}}`
+- `{{MODEL_CURRENT_GAPS_BULLETS}}`
 
 ### 3.1 Discovery 템플릿
 

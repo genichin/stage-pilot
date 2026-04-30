@@ -22,6 +22,10 @@
   - bootstrap으로 생성된 구조 baseline 초안 예시다.
 - `docs/runtime-flows.md`
   - bootstrap으로 생성된 runtime flow baseline 초안 예시다.
+- `docs/interface-contract.md`
+  - bootstrap으로 생성된 인터페이스 계약 baseline 초안 예시다.
+- `docs/data-model.md`
+  - bootstrap으로 생성된 데이터 모델 baseline 초안 예시다.
 - `docs/discovery/index.md`, `docs/srs/index.md`, `docs/batches/index.md`, `docs/releases/index.md`
   - 첫 real Discovery 전까지 비어 있어도 되는 register 골격이다.
 

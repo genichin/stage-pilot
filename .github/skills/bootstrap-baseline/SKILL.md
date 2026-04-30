@@ -1,6 +1,6 @@
 ---
 name: bootstrap-baseline
-description: "Use when: initializing StagePilot in a project before the first real Discovery, running /bootstrap-baseline to create baseline documents and active indexes, or backfilling missing docs/project-structure.md and docs/runtime-flows.md without creating a Discovery unit."
+description: "Use when: initializing StagePilot in a project before the first real Discovery, running /bootstrap-baseline to create baseline documents and active indexes, or backfilling missing docs/project-structure.md, docs/runtime-flows.md, docs/interface-contract.md, and docs/data-model.md without creating a Discovery unit."
 argument-hint: "예: 신규 저장소 baseline 초기화, StagePilot init, baseline 문서/인덱스 생성"
 user-invocable: true
 ---
@@ -9,7 +9,7 @@ user-invocable: true
 
 This skill initializes the StagePilot baseline outside the normal Discovery -> REQ -> Batch -> Release flow.
 
-`docs/project-structure.md`, `docs/runtime-flows.md`, 그리고 active index 문서는 첫 real Discovery 전에 준비하는 bootstrap 산출물이다. 이 skill은 baseline과 index를 먼저 만들고, 첫 Discovery가 실제 제품/서비스 변경 주제로 시작되도록 만든다.
+`docs/project-structure.md`, `docs/runtime-flows.md`, `docs/interface-contract.md`, `docs/data-model.md`, 그리고 active index 문서는 첫 real Discovery 전에 준비하는 bootstrap 산출물이다. 이 skill은 baseline과 index를 먼저 만들고, 첫 Discovery가 실제 제품/서비스 변경 주제로 시작되도록 만든다.
 
 greenfield 저장소처럼 읽을 코드나 설정이 아직 없으면, 이 skill은 사용자에게 최소 질문 세트를 묻고 `.stagepilot/bootstrap/baseline.yaml` seed를 만든 뒤 baseline 문서를 렌더링한다.
 
@@ -19,7 +19,7 @@ greenfield 저장소처럼 읽을 코드나 설정이 아직 없으면, 이 skil
 
 - StagePilot을 새 프로젝트에 처음 적용한 직후 baseline 문서와 index를 만들 때
 - `/bootstrap-baseline` 또는 유사한 init 요청으로 baseline 초기화를 수행할 때
-- `docs/project-structure.md`, `docs/runtime-flows.md`, `docs/discovery/index.md`, `docs/srs/index.md`, `docs/batches/index.md`, `docs/releases/index.md` 중 일부가 없어서 SDLC를 시작하기 전에 뼈대를 복구해야 할 때
+- `docs/project-structure.md`, `docs/runtime-flows.md`, `docs/interface-contract.md`, `docs/data-model.md`, `docs/discovery/index.md`, `docs/srs/index.md`, `docs/batches/index.md`, `docs/releases/index.md` 중 일부가 없어서 SDLC를 시작하기 전에 뼈대를 복구해야 할 때
 - 첫 real Discovery를 기능, 운영 문제, 기술 결정 같은 실제 변경 주제로 시작하고 싶을 때
 
 다음 상황에는 이 skill을 기본 경로로 사용하지 않는다.
@@ -34,7 +34,7 @@ greenfield 저장소처럼 읽을 코드나 설정이 아직 없으면, 이 skil
 - 현재 저장소 루트와 디렉터리 구조
 - `docs/discovery/`, `docs/srs/`, `docs/batches/`, `docs/releases/` 존재 여부
 - `.stagepilot/bootstrap/baseline.yaml` 존재 여부
-- `docs/project-structure.md`, `docs/runtime-flows.md` 존재 여부
+- `docs/project-structure.md`, `docs/runtime-flows.md`, `docs/interface-contract.md`, `docs/data-model.md` 존재 여부
 - 템플릿 파일
 	- `.github/templates/bootstrap/baseline-seed.yaml`
 	- `.github/templates/discovery/index.md`
@@ -43,6 +43,8 @@ greenfield 저장소처럼 읽을 코드나 설정이 아직 없으면, 이 skil
 	- `.github/templates/releases/index.md`
 	- `.github/templates/project-structure.md`
 	- `.github/templates/runtime-flows.md`
+	- `.github/templates/interface-contract.md`
+	- `.github/templates/data-model.md`
 - 현재 시각 (KST)
 
 # Core Rules
@@ -64,6 +66,8 @@ greenfield 저장소처럼 읽을 코드나 설정이 아직 없으면, 이 skil
 	- `docs/releases/index.md`
 	- `docs/project-structure.md`
 	- `docs/runtime-flows.md`
+	- `docs/interface-contract.md`
+	- `docs/data-model.md`
 - 이미 존재하는 파일은 임의로 덮어쓰지 않는다.
 - 일부만 없는 경우에는 누락된 파일만 생성한다.
 
@@ -90,10 +94,32 @@ greenfield 저장소처럼 읽을 코드나 설정이 아직 없으면, 이 skil
 	- `planned-top-level-areas`
 		- 질문: `이미 알고 있는 top-level 경로가 있으면 적어 달라.`
 		- 답변 형식: 줄마다 `path :: responsibility`
+	- `interface-contracts`
+		- 질문: `대표 인터페이스 1~2개가 있으면 적어 달라.`
+		- 답변 형식: 줄마다 `name :: type :: actors :: purpose`
+	- `interface-inputs`
+		- 질문: `각 인터페이스의 대표 input을 적어 달라.`
+		- 답변 형식: 줄마다 `interface-name :: input contract or invocation note`
+	- `interface-outputs`
+		- 질문: `각 인터페이스의 대표 output을 적어 달라.`
+		- 답변 형식: 줄마다 `interface-name :: output contract or artifact`
+	- `interface-errors`
+		- 질문: `각 인터페이스의 대표 error를 적어 달라.`
+		- 답변 형식: 줄마다 `interface-name :: error code or failure behavior`
+	- `core-entities`
+		- 질문: `핵심 엔티티 1~2개가 있으면 적어 달라.`
+		- 답변 형식: 줄마다 `name :: purpose`
+	- `persistence-backend`
+		- 질문: `주 persistence backend가 있으면 적어 달라.`
+		- 답변 형식: 짧은 backend 또는 storage 이름
+	- `compatibility-rules`
+		- 질문: `인터페이스 호환성 규칙이 있으면 적어 달라.`
+		- 답변 형식: 줄마다 `interface-name :: rule` 또는 `* :: rule`
 	- `known-unknowns`
 		- 질문: `아직 미정인 핵심 항목이 있으면 적어 달라.`
 		- 답변 형식: 줄마다 항목 하나
 - 이미 읽을 수 있는 저장소 증거가 있으면 질문 수를 줄이고, seed의 비어 있는 값만 보충한다.
+- `interface-contracts`, `interface-inputs`, `interface-outputs`, `interface-errors`, `core-entities`, `persistence-backend`, `compatibility-rules`가 비어 있더라도 bootstrap은 `runtime`, `primary-entrypoints`, `primary-domain`, `tech-stack`, `planned-top-level-areas`, `known-unknowns`를 바탕으로 기본 초안을 유도해 seed를 보강할 수 있다.
 
 ## 1.6 seed 파일 source-of-truth 규칙
 
@@ -109,6 +135,8 @@ greenfield 저장소처럼 읽을 코드나 설정이 아직 없으면, 이 skil
 
 - `docs/project-structure.md`는 seed의 `project`, `stack`, `runtime`, `structure` 값을 먼저 반영하고, 저장소 관찰 결과가 있으면 보강한다.
 - `docs/runtime-flows.md`는 seed의 `runtime`과 `notes` 값을 먼저 반영하고, 저장소 관찰 결과가 있으면 보강한다.
+- `docs/interface-contract.md`는 seed의 `interfaces` 섹션을 먼저 반영하고, 값이 부족하면 `runtime`, `primary-entrypoints`, `known-unknowns`를 바탕으로 대표 외부 API, CLI, 이벤트, 파일 I/O 계약의 기본 초안을 구체화한다.
+- `docs/data-model.md`는 seed의 `data_model` 섹션을 먼저 반영하고, 값이 부족하면 `primary-domain`, `tech-stack`, `planned-top-level-areas`, `known-unknowns`를 바탕으로 핵심 엔티티, 관계, 상태, persistence 규칙의 기본 초안을 구체화한다.
 - 입력만으로 알 수 없는 항목은 의미 있는 플레이스홀더로 남기되, 추론 가능한 구조 정보는 실제 문장으로 채운다.
 - baseline 문서의 `Source Discovery / Batch`는 bootstrap 산출물임을 드러내는 값으로 채운다.
 - baseline 문서는 `declared`, `observed`, `mixed` 중 어느 모드로 렌더링되었는지와 seed 경로를 드러내야 한다.
@@ -133,7 +161,7 @@ greenfield 저장소처럼 읽을 코드나 설정이 아직 없으면, 이 skil
 4. `.github/templates/bootstrap/baseline-seed.yaml`를 기준으로 `.stagepilot/bootstrap/baseline.yaml`을 생성 또는 보강한다.
 5. 누락된 디렉터리가 있으면 `docs/discovery`, `docs/srs`, `docs/batches`, `docs/releases`를 먼저 준비한다.
 6. 누락된 index 파일을 각 템플릿으로 생성한다.
-7. seed 파일과 저장소 상태를 반영해 `docs/project-structure.md`와 `docs/runtime-flows.md`를 생성 또는 보강한다.
+7. seed 파일과 저장소 상태를 반영해 `docs/project-structure.md`, `docs/runtime-flows.md`, `docs/interface-contract.md`, `docs/data-model.md`를 생성 또는 보강한다.
 8. 이미 존재하는 파일은 보존하고, 필요한 경우에만 누락 복구 또는 seed 반영 사실을 결과에 기록한다.
 9. 완료 후 다음 단계로 `new-discovery`를 사용해 첫 real Discovery를 시작하도록 안내한다.
 
@@ -150,5 +178,5 @@ greenfield 저장소처럼 읽을 코드나 설정이 아직 없으면, 이 skil
 - 생성한 파일 경로가 active docs 구조와 일치하는지 확인한다.
 - `.stagepilot/bootstrap/baseline.yaml`의 필수 필드가 비어 있지 않은지 확인한다.
 - baseline 문서와 index에 남아 있는 플레이스홀더가 정말 사람 결정이 필요한 값인지 점검한다.
-- baseline 문서의 `Project Summary`, `Primary Domain`, `Tech Stack`, `Primary Runtime`가 seed와 모순되지 않는지 확인한다.
+- baseline 문서의 `Project Summary`, `Primary Domain`, `Tech Stack`, `Primary Runtime`와 공통 계약 정보가 seed 및 저장소 관찰과 모순되지 않는지 확인한다.
 - Discovery 문서를 생성하지 않았는지 확인한다.

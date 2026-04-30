@@ -51,6 +51,11 @@ BASELINE_DOC_FILES = [
     Path("docs/runtime-flows.md"),
 ]
 
+OPTIONAL_CROSS_CUTTING_DOC_FILES = [
+    Path("docs/interface-contract.md"),
+    Path("docs/data-model.md"),
+]
+
 BOOTSTRAP_REQUIRED_FILES = ACTIVE_INDEX_FILES + BASELINE_DOC_FILES
 
 
@@ -176,7 +181,23 @@ class Doctor:
 
         if missing_bootstrap_files:
             self.add_bootstrap_required_hint(missing_bootstrap_files)
+        else:
+            self.check_optional_cross_cutting_docs()
         return True
+
+    def check_optional_cross_cutting_docs(self) -> None:
+        if self.is_package_repo_self_check():
+            return
+
+        for path in OPTIONAL_CROSS_CUTTING_DOC_FILES:
+            if (self.workspace_root / path).exists():
+                continue
+            self.add(
+                "WARN",
+                "missing-cross-cutting-baseline-doc",
+                self.workspace_root / path,
+                "Missing optional cross-cutting baseline doc. Run /bootstrap-baseline to backfill it or add the document manually if the project needs this shared contract.",
+            )
 
     def add_bootstrap_required_hint(self, missing_files: list[Path]) -> None:
         if not missing_files or self.is_package_repo_self_check():
