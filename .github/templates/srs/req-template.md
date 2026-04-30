@@ -1,7 +1,7 @@
 # req-XXX: <요구사항 제목>
 
 - Status: Proposed | Approved | Implemented | Deprecated
-- Type: Interface | Data | Exception & Error Handling | Installation | Configuration | Deployment | Documentation | Integration | Testing | Non-Functional
+- Type: Configuration | Data | Deployment | Documentation | Exception | Installation | Integration | Interface | Migration | Non-Functional | Testing
 - Priority: High | Medium | Low
 - Owner: <담당자 또는 팀>
 
@@ -50,6 +50,18 @@
   - <코드 영향>
 - Tests:
   - <테스트 영향>
+
+#### Delivery Trace Delta
+- Batches:
+  - <영향 받는 batch 또는 none>
+- Releases:
+  - <영향 받는 release 또는 none>
+
+#### Revalidation Impact
+- Reverification Needed: yes | no
+- Existing Implementation Invalidated: yes | no
+- Status Recommendation: keep-current | revert-to-approved | revert-to-proposed
+- Follow-up Action: <필요한 재검증, 재배치, 후속 작업>
 
 #### Validation Plan
 - <검증 방법과 완료 조건>

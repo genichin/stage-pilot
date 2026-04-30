@@ -1,6 +1,7 @@
 # {{BAT_ID}}: <배치 제목>
 
 - Status: draft | in-delivery | release-candidate | released | archived
+- Profile: standard | batch-lite
 - Source Discovery: <dcy-id 또는 없음>
 - Included REQ: <REQ-ID 목록>
 - Excluded REQ: <REQ-ID 목록 또는 없음>
@@ -16,9 +17,9 @@
 
 ## Documents
 - Planning: [planning.md](./planning.md)
-- Design: [design.md](./design.md)
-- Implementation: [implementation.md](./implementation.md)
-- Verification: [verification.md](./verification.md)
+- Design: <`[design.md](./design.md)` 또는 `none (batch-lite with no architecture impact)`>
+- Implementation: <`[implementation.md](./implementation.md)` 또는 `create at implementation stage`>
+- Verification: <`[verification.md](./verification.md)` 또는 `create at verification stage`>
 
 ## Notes
 - <공통 리스크, 공통 결정 사항>

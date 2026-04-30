@@ -26,11 +26,31 @@
 3. Batch: 함께 계획, 설계, 구현, 검증하는 delivery 단위
 4. Release: 함께 배포하고 운영 환류를 기록하는 단위
 
+## Bootstrap Baseline Path
+
+- 프로젝트 시작 시 baseline 문서와 active index는 `bootstrap-baseline`으로 먼저 초기화한다.
+- `bootstrap-baseline`은 3-phase lifecycle 밖의 bootstrap 단계이며 별도 governance unit가 아니다.
+- 첫 real Discovery는 baseline 초기화 이후 실제 제품/서비스 변경 주제로 시작한다.
+
 ## Default Flow
 
-1. Requirements: `new-discovery` -> `confirm-discovery` -> `draft-req` -> `confirm-req` -> `suggest-batch-reqs` -> `draft-batch`
-2. Delivery: `draft-batch-planning` -> `draft-batch-design` -> `run-batch-implementation` -> `draft-batch-verification` -> `confirm-batch-verification`
-3. Release & Feedback: `draft-release` -> `confirm-release` -> `capture-release-feedback`
+1. Bootstrap: `bootstrap-baseline` (baseline 문서와 active index가 비어 있을 때만)
+2. Requirements: `new-discovery` -> `confirm-discovery` -> `draft-req` -> `confirm-req` -> `suggest-batch-reqs` -> `draft-batch`
+3. Delivery: `draft-batch-planning` -> `draft-batch-design` -> `run-batch-implementation` -> `draft-batch-verification` -> `confirm-batch-verification` -> `confirm-req-implemented`
+4. Release & Feedback: `draft-release` -> `confirm-release` -> `capture-release-feedback`
+
+## Lightweight Change Path
+
+- 단일 저위험 `Approved` REQ이고 구조/인터페이스/런타임 흐름 영향이 없으면 `minor-change` fast path를 사용할 수 있다.
+- 이 경로는 `suggest-batch-reqs`를 생략하고 `draft-batch`로 바로 `batch-lite` batch를 만든다.
+- `batch-lite`는 planning부터 시작하고, design은 필요할 때만 생성한다.
+- release는 `docs-only`, `tooling`, `app-service` profile 중 하나를 선택해 검증 강도를 조정한다.
+
+## Change Management Extension
+
+- 기존 REQ 본문을 수정할 때는 `change-req`를 사용해 Change Log 근거를 먼저 남긴다.
+- release feedback의 후속 입력은 `Discovery Input`, `REQ Input`, `Change Request Input`으로 분리해 기록한다.
+- 다음 반복 후보만 먼저 정리하려면 `suggest-next-discovery`를 사용하고, 실제 문서 생성은 `new-discovery`로 이어 간다.
 
 ## Stage Mapping
 

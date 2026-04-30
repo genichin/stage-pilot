@@ -5,6 +5,7 @@
 기본 전제는 아래와 같다.
 
 - active SDLC 진입점은 skill-only 체계다.
+- baseline 문서와 active index 초기화는 `bootstrap-baseline`이 담당하며, 이 단계는 Discovery unit를 만들지 않는다.
 - `.github/prompts/`는 active 기준 문서가 아니다.
 - active 산출물 경로는 `docs/discovery/`, `docs/srs/`, `docs/batches/`, `docs/releases/`다.
 
@@ -51,6 +52,23 @@
 
 ## 3. 경로별 플레이스홀더 원칙
 
+### 3.0 Bootstrap baseline 템플릿
+
+대상 경로:
+
+- `.github/templates/project-structure.md`
+- `.github/templates/runtime-flows.md`
+- `.github/templates/discovery/index.md`
+- `.github/templates/srs/index.md`
+- `.github/templates/batches/index.md`
+- `.github/templates/releases/index.md`
+
+처리 원칙:
+
+- `bootstrap-baseline`은 baseline 문서와 index를 초기화하지만 Discovery 문서를 만들지 않는다.
+- baseline 문서에는 저장소 구조와 실행 흐름의 현재 승인 초안을 남긴다.
+- index 문서는 빈 register 골격만 준비하고, 실제 unit 행은 이후 skill이 추가한다.
+
 ### 3.1 Discovery 템플릿
 
 대상 경로:
@@ -92,7 +110,7 @@
 처리 원칙:
 
 - REQ는 `Proposed -> Approved -> Implemented -> Deprecated` 상태를 따른다.
-- `draft-req`는 초안을 만들고, `confirm-req`는 승인 전환을 담당한다.
+- `draft-req`는 초안을 만들고, `confirm-req`는 `Proposed -> Approved`, `confirm-req-implemented`는 `Approved -> Implemented` 전환을 담당한다.
 
 ### 3.3 Batch 템플릿
 
@@ -104,13 +122,16 @@
 주요 키:
 
 - `{{BAT_ID}}`
+- `Profile`
 - Included REQ 목록
 - Source Discovery
 
 처리 원칙:
 
 - batch는 Approved REQ만 포함한다.
-- planning, design, implementation, verification 문서는 같은 batch 폴더 아래에서 관리한다.
+- batch는 `standard` 또는 `batch-lite` profile을 가진다.
+- `batch-lite`는 `minor-change` fast path의 기본 delivery profile이며, 처음에는 `index.md`와 `planning.md`만 만들 수 있다.
+- planning, design, implementation, verification 문서는 같은 batch 폴더 아래에서 관리한다. 단, `batch-lite`는 design/implementation/verification을 단계 진입 시점에 생성할 수 있다.
 - `confirm-batch-verification` 성공 전에는 `release-candidate`로 올리지 않는다.
 
 ### 3.4 Release 템플릿
@@ -123,6 +144,8 @@
 주요 키:
 
 - `{{REL_ID}}`
+- `Profile`
+- `Change Request Input`
 - Included Batch
 - Rollout Plan
 - Rollback Plan
@@ -130,20 +153,26 @@
 처리 원칙:
 
 - release는 `release-candidate` batch만 포함한다.
+- release는 `docs-only`, `tooling`, `app-service` profile 중 하나를 가진다.
+- feedback handoff에는 `Discovery Input`, `REQ Input`, `Change Request Input`을 구분해 기록한다.
 - `confirm-release`는 release 승인, `capture-release-feedback`는 운영 환류 기록을 담당한다.
 
 ## 4. Active Skill Summary
 
 | 목적 | Skill | 주요 입력 | 주요 출력 |
 | --- | --- | --- | --- |
+| Bootstrap baseline 초기화 | `.github/skills/bootstrap-baseline/SKILL.md` | 저장소 루트, baseline/index 존재 여부 | baseline 문서와 active index |
 | Discovery 초안 생성 | `.github/skills/new-discovery/SKILL.md` | 이슈/요청 요약 | `docs/discovery/*.md` |
 | Discovery 확정 | `.github/skills/confirm-discovery/SKILL.md` | `DISCOVERY_ID` | confirmed Discovery |
 | REQ 초안 생성 | `.github/skills/draft-req/SKILL.md` | `DISCOVERY_ID` | `docs/srs/<Type>/req-*.md` |
 | REQ 확정 | `.github/skills/confirm-req/SKILL.md` | `REQ-ID` | Approved REQ |
+| REQ 변경 관리 | `.github/skills/change-req/SKILL.md` | `REQ-ID` | Change Log 기반 REQ 갱신 |
+| REQ 구현 완료 전환 | `.github/skills/confirm-req-implemented/SKILL.md` | `REQ-ID` 또는 `BAT-ID` | Implemented REQ |
 | Batch 추천 | `.github/skills/suggest-batch-reqs/SKILL.md` | `DISCOVERY_ID` 또는 REQ 목록 | batch 후보안 |
 | Batch 생성 | `.github/skills/draft-batch/SKILL.md` | Approved REQ 목록 | `docs/batches/<BAT_ID>/` |
 | Delivery 진행 | `.github/skills/draft-batch-planning/SKILL.md`, `.github/skills/draft-batch-design/SKILL.md`, `.github/skills/run-batch-implementation/SKILL.md`, `.github/skills/draft-batch-verification/SKILL.md`, `.github/skills/confirm-batch-verification/SKILL.md` | `BAT-ID` | batch 문서와 상태 |
 | Release 진행 | `.github/skills/draft-release/SKILL.md`, `.github/skills/confirm-release/SKILL.md`, `.github/skills/capture-release-feedback/SKILL.md` | `BAT-ID` 또는 `REL-ID` | release 문서와 운영 환류 |
+| 다음 Discovery 추천 | `.github/skills/suggest-next-discovery/SKILL.md` | `REL-ID` 또는 없음 | follow-up 후보안 |
 | 상위 orchestration | `.github/skills/run-sdlc/SKILL.md` | Discovery/REQ/Batch/Release 식별자 | 다음 skill 라우팅 |
 
 ## 5. 금지 사항

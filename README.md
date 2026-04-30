@@ -13,6 +13,10 @@ git subtree add --prefix=.vendor/stage-pilot stage-pilot main --squash
 bash .vendor/stage-pilot/bootstrap/install.sh .
 ```
 
+설치 직후에는 Copilot Chat에서 `/bootstrap-baseline`을 먼저 실행해 `docs/project-structure.md`, `docs/runtime-flows.md`, 각 active index를 초기화한다. 이 단계는 Discovery/REQ/Batch/Release 중 어느 것도 아니며, 첫 real Discovery 전에 수행하는 bootstrap 단계다.
+
+bootstrap-baseline 실행 결과 예시는 `examples/bootstrap-baseline/`에 포함돼 있다.
+
 ## 업데이트
 
 ```bash
@@ -28,6 +32,49 @@ bash .vendor/stage-pilot/bootstrap/update.sh --repo-url https://github.com/genic
 # 설치 재적용 없이 subtree만 갱신
 bash .vendor/stage-pilot/bootstrap/update.sh --skip-install .
 ```
+
+## 검증
+
+```bash
+# vendor subtree에서 doctor 실행
+bash .vendor/stage-pilot/bootstrap/stagepilot.sh doctor .
+
+# 설치된 .github/scripts를 직접 실행
+python3 .github/scripts/stagepilot-doctor.py .
+
+# active docs가 반드시 있어야 하는 workspace라면 엄격 모드 사용
+python3 .github/scripts/stagepilot-doctor.py --strict-missing-docs .
+
+# Markdown 리포트를 파일로 저장
+python3 .github/scripts/stagepilot-doctor.py --report artifacts/stagepilot-doctor.md .
+```
+
+`stagepilot-doctor`는 아래 항목을 검사한다.
+
+- active 문서 루트 존재 여부
+- index와 본문 문서의 상태 동기화
+- REQ traceability matrix (`Discovery -> REQ -> Batch -> Release`)
+- feedback loop summary (`Release -> Discovery/REQ/change-req input`)
+- change-req 이후 상태 되돌림 누락 (`Status Recommendation`, 재검증 필요, 구현 무효화와 현재 REQ 상태의 불일치)
+- orphan REQ (`Approved`인데 batch 미포함, release-candidate batch 미포함 등)
+- feedback 미연결 release (`released`인데 `feedback-captured` 미전환 등)
+- 남아 있는 placeholder
+- 상대 markdown 링크 경로
+- REQ 타입 분류 일관성
+- `Next Requirement ID` 규칙
+- template-skill contract 불일치
+- bootstrap source allowlist drift
+
+active 문서가 아직 없는 패키지 저장소나 초기 host 저장소에서는 package contract 검사만 수행하고, active docs 부재는 기본적으로 warning으로 보고한다.
+
+fresh host 저장소에서 baseline 초기화가 아직 끝나지 않았으면 doctor는 `INFO [bootstrap-required]`로 `/bootstrap-baseline` 실행과 누락된 bootstrap 파일 목록을 함께 안내한다.
+
+`--report`를 주면 findings와 traceability matrix를 별도 Markdown 리포트로 저장한다. 기본 동작은 stdout 출력만 유지한다.
+
+## 예제
+
+- `examples/bootstrap-baseline/`: fresh host 저장소에서 `/bootstrap-baseline`을 실행한 직후의 baseline 문서와 sample output
+- `examples/p3-change-management/`: change-req와 suggest-next-discovery가 연결되는 P3 sample workspace
 
 ## Active 문서 루트와 Source of Truth
 
@@ -47,15 +94,17 @@ bash .vendor/stage-pilot/bootstrap/update.sh --skip-install .
 | `docs/releases/index.md` | release 전역 인덱스 |
 | `docs/releases/rel-XXX_*.md` | 개별 release 문서 |
 
-### 4.2 명령과 템플릿 경로
+### 4.2 명령, 템플릿, 가이드 경로
 
 | 경로 | 역할 |
 | --- | --- |
+| `.github/skills/bootstrap-baseline/SKILL.md` | 프로젝트 시작 시 baseline 문서와 active index를 초기화하는 bootstrap entrypoint |
 | `.github/skills/` | active skill entrypoint 집합 |
 | `.github/skills/run-sdlc/SKILL.md` | 현재 상태를 읽고 다음 skill을 안내하는 orchestrator |
 | `.github/templates/discovery/discovery.md` | Discovery 생성 템플릿 |
-| `.github/workflows/draft-discovery-on-label.yml` | issue label 기반 Discovery 자동 생성 workflow |
-| `.github/scripts/create-discovery-from-issue.mjs` | Discovery 자동 생성 스크립트 |
+| `.github/templates/project-structure.md` | baseline 구조 문서 템플릿 |
+| `.github/templates/runtime-flows.md` | baseline 실행 흐름 문서 템플릿 |
+| `.github/instructions/placeholder-guide.md` | placeholder 치환 규칙과 active 경로 가이드 |
 
 ### 4.3 비활성 경로 정책
 
@@ -104,51 +153,88 @@ Discovery는 구현 완료 상태를 표현하는 단위가 아니다. Discovery
 
 ## 6. 기본 운영 흐름
 
+### 6.0 프로젝트 시작 시 baseline 초기화
+
+새 저장소에 StagePilot을 처음 적용할 때는 Discovery를 만들기 전에 `bootstrap-baseline`을 먼저 실행한다.
+
+1. `bootstrap-baseline`
+	`docs/project-structure.md`, `docs/runtime-flows.md`, `docs/discovery/index.md`, `docs/srs/index.md`, `docs/batches/index.md`, `docs/releases/index.md`를 초기화한다.
+	이 단계는 bootstrap 단계이며, Discovery/REQ/Batch/Release 단위로 계산하지 않는다.
+	샘플 결과는 `examples/bootstrap-baseline/bootstrap-baseline-output.md`를 참고한다.
+2. `new-discovery`
+	baseline 초기화가 끝난 뒤 첫 real Discovery를 실제 제품/서비스 변경 주제로 생성한다.
+
 ### 6.1 Requirements Phase
 
 1. `new-discovery`
-	사용자 요청, 운영 피드백, issue 입력을 Discovery 초안으로 만든다.
+	baseline 초기화 이후 사용자 요청, 운영 피드백, issue 입력을 실제 변경 주제의 Discovery 초안으로 만든다.
 2. `confirm-discovery`
 	Discovery를 저장소 현실과 대조하고 REQ drafting 가능 상태로 `confirmed` 전환한다.
 3. `draft-req`
 	confirmed Discovery에서 승인 가능한 REQ 문서를 만든다.
 4. `confirm-req`
 	REQ를 `Approved`로 전환한다.
-5. `suggest-batch-reqs`
+5. `change-req`
+	기존 REQ 수정이 필요할 때 Change Log 기반 변경 요청을 먼저 기록하고 상태 되돌림/재검증 범위를 판정한다.
+6. `suggest-batch-reqs`
 	Approved REQ를 어떤 batch로 묶을지 후보를 제시한다.
-6. `draft-batch`
-	선택된 REQ 묶음으로 batch 폴더와 기본 문서를 생성한다.
+	`change-req` 이후에도 delivery로 이어질 REQ만 batch 후보로 본다.
+7. `draft-batch`
+	선택된 REQ 묶음으로 `standard` 또는 `batch-lite` profile의 batch 폴더와 기본 문서를 생성한다.
 
 ### 6.2 Delivery Phase
 
 1. `draft-batch-planning`
 	batch 범위, 제외 범위, 의존성, 마일스톤, 리스크를 정리한다.
 2. `draft-batch-design`
-	batch 수준의 architecture summary, changed areas, key decisions를 정리한다.
+	batch 수준의 architecture summary, changed areas, key decisions를 정리한다. `batch-lite`에서 구조 영향이 없으면 생략할 수 있다.
 3. `run-batch-implementation`
 	실제 코드 변경을 수행하고 implementation 문서에 changed files, execution log, validation을 기록한다.
 4. `draft-batch-verification`
-	REQ acceptance criteria를 evidence에 연결한다.
+	REQ acceptance criteria를 evidence에 연결한다. `batch-lite`는 planning과 implementation만으로도 검증할 수 있지만, 구조 영향이 생기면 design을 추가해야 한다.
 5. `confirm-batch-verification`
 	evidence가 충분하면 batch를 `release-candidate`로 전환한다.
+6. `confirm-req-implemented`
+	`release-candidate` 또는 `released` batch의 verification evidence를 기준으로 포함 REQ를 `Implemented`로 동기화한다.
 
 ### 6.3 Release & Feedback Phase
 
 1. `draft-release`
-	하나 이상의 `release-candidate` batch로 release 문서를 생성한다.
+	하나 이상의 `release-candidate` batch로 release 문서를 생성하고 `docs-only`, `tooling`, `app-service` 중 하나의 release profile을 선택한다.
 2. `confirm-release`
-	rollout, rollback, verification checklist를 점검하고 release를 `confirmed`로 전환한다.
+	rollout, rollback, verification checklist와 profile별 검증 항목을 점검하고 release를 `confirmed`로 전환한다.
 3. `capture-release-feedback`
-	배포 후 운영 관찰 결과와 후속 Discovery/REQ 입력을 release 문서에 남긴다.
+	배포 후 운영 관찰 결과와 후속 Discovery/REQ/change-req 입력을 release 문서에 남긴다.
+4. `suggest-next-discovery`
+	release feedback, baseline gap, 미구현/변경 대기 REQ를 읽고 다음 반복 후보를 추천한다.
 
-### 6.4 Orchestrator 사용 기준
+### 6.4 경량 변경 경로
+
+아래 조건을 모두 만족하면 `minor-change` fast path를 사용할 수 있다.
+
+- `Approved` REQ가 정확히 1개다.
+- 범위가 문서, 템플릿, 스크립트, bootstrap, 설정처럼 국소적이다.
+- 구조, 인터페이스, runtime flow 변경이 없다.
+- 독립 release가 가능하고 사람 선택이 필요한 묶음 판단이 남아 있지 않다.
+
+이 경로에서는 `suggest-batch-reqs`를 생략하고 바로 `draft-batch`를 실행해 `Profile: batch-lite` batch를 만든다. `batch-lite`는 최초에 `index.md`와 `planning.md`만 만들고, implementation/verification 문서는 해당 단계 진입 시 추가한다. design은 planning의 `Design Gate`가 `yes`가 될 때만 생성한다.
+
+### 6.5 Orchestrator 사용 기준
 
 `run-sdlc`는 현재 문서 상태를 읽고 다음에 실행할 skill을 1단계씩 안내하는 entrypoint다.
 
+- active unit가 아직 없고 baseline 문서나 active index가 비어 있으면 `bootstrap-baseline`을 먼저 제안한다.
 - Discovery 입력이면 `confirm-discovery`, `draft-req`, `suggest-batch-reqs` 중 다음 단계를 제안한다.
-- REQ 입력이면 `confirm-req`, `suggest-batch-reqs`, `draft-batch` 중 다음 단계를 제안한다.
-- Batch 입력이면 planning, design, implementation, verification, confirm 중 다음 단계를 제안한다.
-- Release 입력이면 `confirm-release` 또는 `capture-release-feedback`를 제안한다.
+- REQ 입력이면 `confirm-req`, `change-req`, `suggest-batch-reqs`, `draft-batch`, `confirm-req-implemented` 중 다음 단계를 제안한다. 단일 저위험 REQ면 `minor-change -> batch-lite` 경로를 우선 제안할 수 있다.
+- Batch 입력이면 `draft-batch-planning`, `draft-batch-design`, `run-batch-implementation`, `draft-batch-verification`, `confirm-batch-verification`, `confirm-req-implemented`, `draft-release` 중 다음 단계를 제안한다.
+- Release 입력이면 선택된 release profile과 feedback handoff 상태를 기준으로 `confirm-release`, `capture-release-feedback`, `suggest-next-discovery`, `change-req`를 제안한다.
+
+### 6.6 변경 관리와 개선 루프
+
+- 기존 REQ의 `Requirement`, `Acceptance Criteria`, `Impacted Area`를 바꿀 때는 먼저 `change-req`로 새 Change Log 항목을 만든다.
+- 변경이 기존 구현/검증을 무효화하면 REQ 상태를 `Implemented -> Approved` 또는 필요 시 `Proposed`로 되돌린다.
+- release feedback는 `Discovery Input`, `REQ Input`, `Change Request Input`으로 나눠 기록한다.
+- 다음 개선 루프의 우선순위만 먼저 정하고 싶으면 `suggest-next-discovery`를 사용한다.
 
 ## 7. Phase Gate 기준
 
@@ -160,15 +246,18 @@ Discovery는 구현 완료 상태를 표현하는 단위가 아니다. Discovery
 - 구현 대상으로 채택할 REQ가 `Approved` 상태다.
 - REQ의 Acceptance Criteria가 구현 판단 가능한 수준이다.
 - 사람 결정 필요 항목과 후속 backlog 항목이 분리되어 있다.
+- 기존 REQ 변경이 있었다면 `change-req` 기록과 상태 동기화가 끝났다.
 
 ### 7.2 Delivery 완료 기준
 
 아래 조건을 만족해야 Release & Feedback으로 넘어간다.
 
-- batch planning, design, implementation, verification 문서가 존재한다.
+- batch planning, implementation, verification 문서가 존재한다.
+- `standard` batch이거나 `batch-lite`에서 구조 영향이 생긴 경우 design 문서가 존재한다.
 - batch에 포함된 REQ acceptance criteria가 evidence와 연결된다.
 - verification blocker가 해소되었다.
 - batch 상태가 `release-candidate`다.
+- 구현과 검증이 완료된 포함 REQ는 필요 시 `Implemented` 상태로 동기화되었다.
 
 ### 7.3 Release & Feedback 완료 기준
 
@@ -177,7 +266,7 @@ Discovery는 구현 완료 상태를 표현하는 단위가 아니다. Discovery
 - release 계획이 `confirmed` 상태를 통과했다.
 - 배포 결과가 기록되었다.
 - 운영 관찰 결과가 release 문서에 남았다.
-- 후속 Discovery 또는 REQ 입력이 정리되었다.
+- 후속 Discovery, REQ, change-req 입력이 정리되었다.
 
 ## 8. 사람 판단이 필요한 경계
 
@@ -190,24 +279,22 @@ Discovery는 구현 완료 상태를 표현하는 단위가 아니다. Discovery
 - 외부 시스템 또는 외부 데이터 확인 결과
 - `suggest-batch-reqs` 결과 중 어떤 후보를 실제 batch로 채택할지에 대한 선택
 
-특히 `suggest-batch-reqs`는 추천안을 만드는 단계이며, 최종 batch 묶음은 사람 선택이 필요하다. 따라서 orchestrator는 이 경계에서 자동 진행하지 않고 멈춘다.
+특히 `suggest-batch-reqs`는 추천안을 만드는 단계이며, 최종 batch 묶음은 사람 선택이 필요하다. 따라서 orchestrator는 이 경계에서 자동 진행하지 않고 멈춘다. 단, 단일 저위험 REQ는 `minor-change` fast path로 바로 `batch-lite`를 만들 수 있다.
 
 ## 9. 자동화 규칙
 
-### 9.1 Discovery 자동 생성
+### 9.1 Discovery 자동 생성 확장 규칙
 
-GitHub issue에 `draft-discovery` 라벨이 붙으면 아래 자동화가 동작한다.
+현재 StagePilot 기본 패키지에는 GitHub issue label 기반 Discovery 자동 생성 workflow/script가 포함되어 있지 않다.
 
-- workflow: `.github/workflows/draft-discovery-on-label.yml`
-- script: `.github/scripts/create-discovery-from-issue.mjs`
-- output: `docs/discovery/<DISCOVERY_ID>.md`, `docs/discovery/index.md`
-
-이 자동화는 아래 규칙을 따른다.
+호스트 저장소가 별도 workflow 또는 script를 추가해 Discovery 자동 생성을 확장할 수 있으며, 그런 자동화는 아래 규칙을 따라야 한다.
 
 - Discovery ID는 `dcy-<3자리>_<YYYYMMDD>_<topic-slug>` 형식을 사용한다.
 - 동일 issue에 대해 반복 실행해도 중복 Discovery를 만들지 않는다.
 - discovery index에 문서 링크와 상태를 등록한다.
 - 결과는 issue comment로 다시 보고한다.
+
+자동화를 추가하지 않는 경우에도 Discovery 생성과 index 갱신의 source of truth는 여전히 `new-discovery` skill과 `docs/discovery/` 문서다.
 
 ### 9.2 Index 관리 규칙
 
@@ -223,12 +310,15 @@ GitHub issue에 `draft-discovery` 라벨이 붙으면 아래 자동화가 동작
 2. Discovery를 저장소 현실과 맞춰 보강한 뒤 `confirm-discovery`를 실행한다.
 3. Discovery를 REQ로 쪼개고 `draft-req`를 수행한다.
 4. 각 REQ를 `confirm-req`로 승인한다.
-5. `suggest-batch-reqs`로 batch 후보를 받고, 사람이 묶음을 선택한다.
-6. `draft-batch`로 delivery 단위를 만든다.
-7. planning, design, implementation, verification을 순서대로 수행한다.
-8. `confirm-batch-verification`으로 release-candidate를 만든다.
-9. `draft-release`, `confirm-release`로 배포를 준비하고 실행한다.
-10. `capture-release-feedback`으로 운영 환류를 남긴다.
+5. REQ가 여러 개이거나 묶음 판단이 필요하면 `suggest-batch-reqs`로 batch 후보를 받고, 사람이 묶음을 선택한다.
+6. 단일 저위험 REQ면 `draft-batch`를 `minor-change -> batch-lite` 경로로 바로 실행한다.
+7. 그 외 경우 선택된 묶음으로 `draft-batch`를 실행한다.
+8. planning, design(필요한 경우), implementation, verification을 순서대로 수행한다.
+9. `confirm-batch-verification`으로 release-candidate를 만든다.
+10. `confirm-req-implemented`로 구현/검증 완료 REQ를 `Implemented`로 동기화한다.
+11. `draft-release`, `confirm-release`로 배포를 준비하고 실행한다. 이때 release profile은 `docs-only`, `tooling`, `app-service` 중 하나를 선택한다.
+12. `capture-release-feedback`으로 운영 환류를 남긴다.
+13. 필요하면 `suggest-next-discovery`로 다음 반복 후보를 정리하거나, 기존 REQ 수정이면 `change-req`로 바로 연결한다.
 
 ### 10.2 이미 존재하는 문서를 이어서 처리하는 경우
 

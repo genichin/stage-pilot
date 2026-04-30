@@ -1,0 +1,24 @@
+# Sample Output: bootstrap-baseline
+
+- Input:
+  - fresh host repository after StagePilot install
+- Created Files:
+  - `docs/discovery/index.md`
+  - `docs/srs/index.md`
+  - `docs/batches/index.md`
+  - `docs/releases/index.md`
+  - `docs/project-structure.md`
+  - `docs/runtime-flows.md`
+- Baseline Status:
+  - `docs/project-structure.md`: created
+  - `docs/runtime-flows.md`: created
+- Index Status:
+  - `docs/discovery/index.md`: created
+  - `docs/srs/index.md`: created
+  - `docs/batches/index.md`: created
+  - `docs/releases/index.md`: created
+- Notes:
+  - no Discovery document was created
+  - no REQ, Batch, or Release unit was opened
+- Next Action:
+  - `/new-discovery <actual product or service change topic>`

@@ -26,7 +26,10 @@ ensure_host_structure() {
     ".github/runbooks/services"
     ".github/scripts"
     ".github/templates"
-    "docs/sdlc"
+    "docs/discovery"
+    "docs/srs"
+    "docs/batches"
+    "docs/releases"
   )
 
   for dir in "${dirs[@]}"; do

@@ -1,14 +1,12 @@
 # Relative paths from selected source .github directory.
 # Files
-AGENTS.md
-START-HERE.md
 copilot-instructions.md
 
 # Directories
 agents/
 instructions/
 prompts/
+runbooks/
 scripts/
 skills/
 templates/
-tools/

@@ -16,7 +16,7 @@ This skill converts a Discovery document into one or more requirement documents 
 - `/draft-req dcy-001`처럼 Discovery를 REQ backlog로 정규화해야 할 때
 - Discovery의 FR/NFR을 구현 가능한 requirement 문서로 분리해야 할 때
 - `docs/srs/index.md`의 register와 Next Requirement ID를 함께 갱신해야 할 때
-- baseline 문서 생성/갱신 요구를 REQ backlog에 반영해야 할 때
+- Discovery가 구조 또는 runtime baseline 갱신을 요구할 때 이를 REQ backlog에 반영해야 할 때
 
 # Inputs
 
@@ -36,8 +36,9 @@ This skill converts a Discovery document into one or more requirement documents 
 
 - `docs/project-structure.md`와 `docs/runtime-flows.md`는 REQ의 상세 본문을 대체하지 않지만, 구조 제약과 흐름 제약을 읽기 위한 공통 baseline 참조 문서로 사용한다.
 - REQ에는 baseline 문서의 전체 구조나 전체 흐름을 복제하지 않는다. 구현에 필요한 제약과 acceptance 기준만 남긴다.
-- source Discovery가 baseline Discovery이거나 baseline 문서 생성/갱신을 요구하면, REQ 후보에 baseline 문서 생성 또는 갱신 작업을 포함해야 한다.
-- baseline 문서가 없고 source Discovery가 첫 반복 또는 baseline 보완 반복이라면, baseline 문서를 산출물로 만드는 REQ를 누락하면 안 된다.
+- source Discovery가 구조 또는 runtime baseline 갱신을 요구하면, REQ 후보에 baseline 문서 갱신 작업을 포함해야 한다.
+- baseline 문서가 없고 source Discovery가 그 갭 보완을 직접 범위에 포함한다면, baseline 문서를 다루는 REQ를 누락하면 안 된다.
+- baseline 문서가 없는데 source Discovery가 그 갭을 다루지 않는다면, `bootstrap-baseline` 선행 누락 가능성을 보고한다.
 
 ## 1. 입력 해석
 
@@ -51,7 +52,7 @@ This skill converts a Discovery document into one or more requirement documents 
 - 하나의 FR이 과도하게 크면 복수 REQ로 분해한다.
 - NFR은 독립 측정 가능성, 독립 backlog 가치, 운영 영향도가 충분할 때만 별도 REQ로 승격한다.
 - 특정 FR 또는 batch 검증 기준에 흡수하는 편이 적절한 NFR은 별도 REQ를 만들지 말고 Notes에 연결 근거를 남긴다.
-- baseline 문서 관련 요구는 보통 `Documentation`, `Interface`, `Configuration` 중 가장 적절한 Type으로 분류한다.
+- baseline 문서 갱신 요구는 보통 `Documentation`, `Interface`, `Configuration` 중 가장 적절한 Type으로 분류한다.
 
 ## 3. Type 및 경로 규칙
 
@@ -64,6 +65,7 @@ This skill converts a Discovery document into one or more requirement documents 
 	- `Installation`
 	- `Integration`
 	- `Interface`
+	- `Migration`
 	- `Non-Functional`
 	- `Testing`
 - 새 REQ 경로는 `docs/srs/<Type>/req-XXX_<slug>.md` 형식을 사용한다.
@@ -100,7 +102,7 @@ This skill converts a Discovery document into one or more requirement documents 
 2. Discovery 문서에서 FR/NFR, 범위 경계, 리스크, 성공 기준을 읽는다.
 3. `docs/project-structure.md`와 `docs/runtime-flows.md`가 있으면 읽고, REQ에 남겨야 할 구조 제약과 흐름 제약을 추린다.
 4. FR/NFR별 REQ 후보 목록을 만든다.
-5. baseline 문서 생성/갱신 요구가 있으면 이를 반영한 REQ 후보를 포함한다.
+5. baseline 문서 갱신 또는 baseline 갭 보완 요구가 있으면 이를 반영한 REQ 후보를 포함한다.
 6. 각 후보에 대해 Type, 제목, slug, Acceptance Criteria를 결정한다.
 7. `docs/srs/index.md`의 다음 번호부터 순서대로 REQ 파일을 생성한다.
 8. `docs/srs/index.md`를 갱신한다.
@@ -121,4 +123,4 @@ This skill converts a Discovery document into one or more requirement documents 
 - 모든 REQ 경로가 `docs/srs/<Type>/req-XXX_<slug>.md` 형식을 만족하는지 확인한다.
 - 생성된 REQ 수와 `Requirement Register` 행 수가 일치하는지 확인한다.
 - `Next Requirement ID`가 마지막 생성 번호보다 정확히 1 큰지 확인한다.
-- baseline 문서 생성/갱신이 source Discovery 범위에 있으면, 이를 다루는 REQ가 실제로 생성되었는지 확인한다.
+- baseline 문서 갱신 또는 baseline 갭 보완이 source Discovery 범위에 있으면, 이를 다루는 REQ가 실제로 생성되었는지 확인한다.

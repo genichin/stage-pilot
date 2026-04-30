@@ -17,3 +17,10 @@
 
 ## Edge Cases
 - <예외 처리 및 설계 경계>
+
+## Architecture Impact
+- <none | project-structure | runtime-flows | both>
+
+## Reference Doc Update Plan
+- project-structure.md: <갱신 계획 또는 none>
+- runtime-flows.md: <갱신 계획 또는 none>

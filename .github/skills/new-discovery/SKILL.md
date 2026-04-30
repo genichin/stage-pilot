@@ -1,6 +1,6 @@
 ---
 name: new-discovery
-description: "Use when: deciding whether to update an existing Discovery document or start a new one, running /new-discovery with or without parameters, generating the first baseline Discovery for docs/project-structure.md and docs/runtime-flows.md, drafting docs/discovery/dcy-<id>_<YYYYMMDD>_<topic-slug>.md, generating Discovery documents, or updating docs/discovery/index.md."
+description: "Use when: deciding whether to update an existing Discovery document or start a new one, running /new-discovery with or without parameters, drafting docs/discovery/dcy-<id>_<YYYYMMDD>_<topic-slug>.md for a real product/service change, generating Discovery documents, or updating docs/discovery/index.md after baseline initialization is ready."
 argument-hint: "예: 사용자 로그인 기능 추가 - OAuth2 소셜 로그인, 세션 관리, 로그아웃 처리"
 user-invocable: true
 ---
@@ -9,7 +9,7 @@ user-invocable: true
 
 This skill decides whether an incoming request should update an existing Discovery document or start a new one, then drafts or updates Discovery documentation based on issues, user requests, meeting notes, or repository state.
 
-입력이 없으면 현재 Discovery/SRS/batch/release 상태와 baseline 문서 상태를 읽어 새 Discovery가 필요한지 판정한다. 첫 Discovery가 없는 저장소에서는 `docs/project-structure.md`와 `docs/runtime-flows.md`를 baseline 산출물로 만드는 Discovery를 생성한다.
+입력이 없으면 현재 Discovery/SRS/batch/release 상태와 baseline 문서 상태를 읽어 새 Discovery가 필요한지 판정한다. baseline 초기화가 아직 끝나지 않은 저장소에서는 먼저 `bootstrap-baseline`으로 `docs/project-structure.md`, `docs/runtime-flows.md`, active index를 준비한 뒤 첫 real Discovery를 생성한다.
 
 새 Discovery를 생성하기로 판정된 경우 generated output must follow this structure:
 
@@ -23,7 +23,7 @@ This skill decides whether an incoming request should update an existing Discove
 - 새로운 SDLC 주기를 시작해야 할 때
 - 기존 SDLC의 요구사항, 범위, 성공 기준을 조정해야 하는데 새 주기 생성이 필요한지 먼저 판정해야 할 때
 - `/new-discovery ...` 또는 파라미터 없는 `/new-discovery`로 Discovery 초안을 만들어야 할 때
-- 첫 프로젝트 반복에서 baseline 문서 생성 SDLC를 시작해야 할 때
+- baseline 초기화가 완료된 뒤 첫 real Discovery를 시작해야 할 때
 - 이슈/요청사항을 `docs/discovery/` 아래 표준 Discovery 문서로 전환해야 할 때
 - Discovery 문서를 템플릿 기반으로 작성하되, 추론 가능한 내용을 실제 문장으로 채워야 할 때
 - `docs/discovery/index.md`에 새 Discovery 링크를 추가해야 할 때
@@ -62,9 +62,10 @@ This skill decides whether an incoming request should update an existing Discove
 
 ## 0. Baseline 문서 정책
 
-- 모든 프로젝트의 첫 Discovery는 `docs/project-structure.md`와 `docs/runtime-flows.md`를 baseline 산출물로 만드는 반복을 시작해야 한다.
 - `docs/project-structure.md`와 `docs/runtime-flows.md`는 SDLC의 별도 governance unit가 아니라, 이후 Discovery/REQ/Batch/Release에서 공통으로 참조하는 cross-cutting baseline 문서다.
-- baseline 문서가 없으면 새 Discovery의 핵심 변경 항목과 FR에 baseline 문서 생성 또는 갱신 요구를 반드시 포함한다.
+- baseline 초기화는 첫 Discovery와 분리된 `bootstrap-baseline` 경로를 기본값으로 사용한다.
+- baseline 문서와 active index가 모두 없는 저장소에서는 `new-discovery`가 Discovery를 생성하기 전에 `bootstrap-baseline`을 우선 추천하고 중단한다.
+- baseline 문서가 이미 있고, Discovery가 구조/런타임 변경을 다룰 때만 해당 Discovery 안에 baseline 문서 갱신 요구를 포함한다.
 
 ## 1. 파라미터 없는 실행 판정 규칙
 
@@ -79,12 +80,12 @@ This skill decides whether an incoming request should update an existing Discove
 	- `no-history`: Discovery와 후속 SDLC 문서가 사실상 없고 첫 반복을 시작해야 하는 상태
 	- `active-cycle`: draft/review Discovery, Proposed REQ, 진행 중 batch, 미정리 release처럼 활성 unit가 존재해 파라미터 없는 실행만으로는 다음 반복 추천이 모호한 상태
 	- `ready-for-next-iteration`: active unit는 없고 새 반복을 시작할 준비가 된 상태
-- `no-history`이면 baseline Discovery를 생성한다.
-- 입력 원문이 없는 `active-cycle`이면 새 Discovery를 자동 생성하지 않는다. 대신 현재 반복을 계속 진행하도록 `run-sdlc` 또는 해당 후속 skill을 추천한다.
-- `active-cycle`이더라도 입력 원문, 이슈 링크, 신규 요구 요약처럼 명시적 신규 요구가 있으면 후보 비교를 거쳐 새 Discovery 생성을 계속 진행할 수 있다.
-- `active-cycle`에서 병렬 Discovery를 허용할 때는 기존 active unit와 범위 충돌 여부, 대체/후속 관계 여부, 자동 생성이 안전한지 여부를 먼저 점검한다.
+- `no-history`이고 baseline 문서 또는 active index가 없으면 `bootstrap-baseline`을 우선 추천하고 새 Discovery를 생성하지 않는다.
+- `no-history`이지만 baseline 초기화가 끝나 있으면 첫 real Discovery를 생성한다.
+- `active-cycle`이면 새 Discovery를 생성하지 않고 중단한다. 대신 현재 반복을 계속 진행하도록 `run-sdlc` 또는 해당 후속 skill을 추천한다.
 - `ready-for-next-iteration`이면 이전 Discovery, SRS, 구현 상태, baseline 문서 차이를 읽고 추천 follow-up Discovery를 생성한다.
-- baseline 문서가 없고 active unit도 없다면, follow-up Discovery보다 baseline 문서 생성/정비 Discovery를 우선한다.
+- `ready-for-next-iteration`에서 후보 ranking만 먼저 필요하면 `suggest-next-discovery`를 사용하고, 실제 문서 생성이 확정되면 `new-discovery`로 이어 간다.
+- baseline 문서가 없고 active unit도 없다면, follow-up Discovery보다 `bootstrap-baseline`을 우선한다.
 
 ## 2. 기존 Discovery 갱신 vs 새 Discovery 생성 판정 규칙
 
@@ -145,7 +146,7 @@ This skill decides whether an incoming request should update an existing Discove
 - 판정 결과가 `새 Discovery 생성`이면 새 파일을 `docs/discovery/<DISCOVERY_ID>.md` 경로로 생성한다.
 - `새 Discovery 생성`인 경우 Discovery 문서는 `.github/templates/discovery/discovery.md`를 기반으로 생성한다.
 - `docs/discovery/index.md`가 없으면 `.github/templates/discovery/index.md`를 기반으로 생성한다.
-- baseline Discovery이거나 baseline 문서 부재를 해소하는 Discovery인 경우, `.github/templates/project-structure.md`와 `.github/templates/runtime-flows.md`를 이후 산출물 템플릿 참조로 취급한다.
+- Discovery가 구조/런타임 baseline 갭을 직접 다루는 경우, `.github/templates/project-structure.md`와 `.github/templates/runtime-flows.md`를 이후 산출물 템플릿 참조로 취급한다.
 - `기존 Discovery 갱신`이면 대상 Discovery 문서를 갱신한다.
 - 동일 경로가 이미 있으면 덮어쓰지 말고 다음 ID를 재계산한다.
 - 불필요한 파일은 만들지 않는다.
@@ -159,7 +160,7 @@ This skill decides whether an incoming request should update an existing Discove
 - 합리적 기본안을 제시할 수 있으면 초안 문장으로 채운다.
 - 사용자 확인이 반드시 필요하면 관련 본문에는 최소 플레이스홀더를 남기고 `# 10. 사용자 결정 필요 항목 요약`에 정리한다.
 - `기존 Discovery 갱신`인 경우 FR/NFR 변경 또는 삭제 이유, 영향 받는 하위 단계, 기존 문서와의 차이를 문서 안에 명시해 변경 근거를 남긴다.
-- baseline Discovery 또는 baseline 문서 부재를 다루는 Discovery라면 `# 4. 이번에 정의할 변경`, `# 5. 요구사항 목록`, `# 9. 파일 처리 결과`에 `docs/project-structure.md`와 `docs/runtime-flows.md` 생성 또는 갱신 요구를 명시한다.
+- Discovery가 구조/런타임 baseline 변경을 직접 다루는 경우 `# 4. 이번에 정의할 변경`, `# 5. 요구사항 목록`, `# 9. 파일 처리 결과`에 `docs/project-structure.md`와 `docs/runtime-flows.md` 갱신 요구를 명시한다.
 
 ## 6. 플레이스홀더 유지 규칙
 
@@ -203,13 +204,13 @@ This skill decides whether an incoming request should update an existing Discove
 ## `# 4. 이번에 정의할 변경`
 
 - 핵심 변경 항목 1~3개를 직접 작성한다.
-- baseline Discovery 또는 baseline 갭 보완 Discovery인 경우 baseline 문서 생성/정비를 핵심 변경 항목에 포함한다.
+- Discovery가 구조 또는 runtime baseline 갭을 다루면 baseline 문서 갱신을 핵심 변경 항목에 포함한다.
 - `영향 범위`의 코드/문서/운영 영향도 추론해 채운다.
 
 ## `# 5. 요구사항 목록`
 
 - FR 2개 이상, NFR 1개 이상을 직접 작성한다.
-- baseline Discovery 또는 baseline 문서 부재를 다루는 Discovery인 경우, `docs/project-structure.md`와 `docs/runtime-flows.md` 생성 또는 갱신 요구를 FR에 포함한다.
+- Discovery가 구조 또는 runtime baseline 갭을 다루는 경우, `docs/project-structure.md`와 `docs/runtime-flows.md` 갱신 요구를 FR에 포함한다.
 - In Scope/Out of Scope는 초안 수준으로 제안한다.
 - 사용자 승인 없이는 확정할 수 없는 범위 경계는 플레이스홀더로 남긴다.
 
@@ -221,13 +222,13 @@ This skill decides whether an incoming request should update an existing Discove
 ## `# 7. 초기 성공 기준`
 
 - 성공 기준 2개 이상을 작성한다.
-- baseline Discovery인 경우 baseline 문서와 이후 산출물 참조 가능성을 성공 기준에 연결한다.
+- Discovery가 구조 또는 runtime baseline 변경을 다루는 경우 baseline 문서와 이후 산출물 참조 가능성을 성공 기준에 연결한다.
 - 각 성공 기준에 대해 측정 방식과 데이터 출처 초안을 작성한다.
 
 ## `# 9. 파일 처리 결과`
 
 - 생성 결과와 최소 참조 문서를 채운다.
-- baseline Discovery 또는 baseline 갭 보완 Discovery라면 `.github/templates/project-structure.md`와 `.github/templates/runtime-flows.md`를 참조 문서에 포함한다.
+- Discovery가 구조 또는 runtime baseline 갭을 다루면 `.github/templates/project-structure.md`와 `.github/templates/runtime-flows.md`를 참조 문서에 포함한다.
 - 참조 문서가 없으면 `없음`이라고 쓴다.
 
 ## `# 10. 사용자 결정 필요 항목 요약`
@@ -268,6 +269,7 @@ Discovery 문서의 `# 3. 문제점의 요약` 중 `현재 상태`를 채우기 
 
 1. 입력 원문이 있으면 이슈명을 한 문장으로 정리하고, 없으면 저장소 상태를 먼저 분류한다.
 2. 파라미터 없는 실행이면 discovery/srs/batches/releases/baseline 문서 상태를 읽어 `no-history`, `active-cycle`, `ready-for-next-iteration` 중 하나로 판정한다.
+<<<<<<< HEAD
 3. 입력 원문이 없고 `active-cycle`이면 새 Discovery 자동 생성을 중단하고 현재 반복을 계속 진행해야 하는 이유와 추천 skill을 보고한다.
 4. 입력 원문이 없고 `no-history`이면 baseline Discovery를 생성 대상으로 확정한다.
 5. 입력 원문이 없고 `ready-for-next-iteration`이면 이전 Discovery, SRS, 구현 상태, baseline 문서 상태를 바탕으로 추천 follow-up Discovery 주제를 정한다.
@@ -282,6 +284,21 @@ Discovery 문서의 `# 3. 문제점의 요약` 중 `현재 상태`를 채우기 
 14. `새 Discovery 생성`이면 `docs/discovery/<DISCOVERY_ID>.md` 파일을 생성한다.
 15. `기존 Discovery 갱신`이면 대상 Discovery 문서를 갱신한다.
 16. 아래 플레이스홀더를 우선 치환한다.
+=======
+3. `active-cycle`이면 새 Discovery 생성을 중단하고 현재 반복을 계속 진행해야 하는 이유와 추천 skill을 보고한다.
+4. `no-history`이고 baseline 문서 또는 active index가 비어 있으면 `bootstrap-baseline`을 우선 추천하고 Discovery 생성을 중단한다.
+5. `no-history`이지만 baseline 초기화가 끝나 있으면 첫 real Discovery 생성 대상으로 확정한다.
+6. `ready-for-next-iteration`이면 이전 Discovery, SRS, 구현 상태, baseline 문서 상태를 바탕으로 추천 follow-up Discovery 주제를 정한다.
+7. 입력 원문이 있거나 추천 Discovery 주제가 정해졌으면 위 `확인 절차`에 따라 issue 번호/링크, 제목 키워드, 기능명, 범위 키워드를 추출하고 기존 후보 주기를 찾는다.
+8. 후보 비교 결과를 바탕으로 `기존 Discovery 갱신` 또는 `새 Discovery 생성`으로 판정한다.
+9. 판정이 애매하면 사용자 확인 전까지 자동 생성 또는 자동 갱신을 중단하고 후보와 근거를 보고한다.
+10. 저장소 현황 탐색을 수행한다.
+11. 판정 결과가 `새 Discovery 생성`이면 기존 `docs/discovery/` 경로를 다시 스캔해 다음 번호를 계산한다.
+12. `새 Discovery 생성`이면 날짜와 slug를 조합해 `DISCOVERY_ID`를 만든다.
+13. `새 Discovery 생성`이면 `docs/discovery/<DISCOVERY_ID>.md` 파일을 생성한다.
+14. `기존 Discovery 갱신`이면 대상 Discovery 문서를 갱신한다.
+15. 아래 플레이스홀더를 우선 치환한다.
+>>>>>>> e15c3d2 (feat: introduce lightweight change path, change-req skill, and release feedback loop)
 	- `{{DOC_STATUS:draft|review|confirmed}}` -> `draft`
 	- `{{DISCOVERY_ID:dcy-<3자리>_<YYYYMMDD>_<topic-slug>}}` -> 계산한 `DISCOVERY_ID`
 	- `{{ISSUE_NAME:짧은 한글 또는 영문 이슈명}}` -> 입력 원문 또는 요약 이슈명
@@ -294,6 +311,7 @@ Discovery 문서의 `# 3. 문제점의 요약` 중 `현재 상태`를 채우기 
 	- `{{FOLLOW_UP_DISCOVERY_REF:없음 또는 docs/discovery/<DISCOVERY_ID>.md}}` -> `없음` 또는 후속 Discovery 경로
 	- `{{OUTPUT_PATH}}` -> 생성 파일 경로
 	- `{{FILE_RESULT:생성|갱신|미생성}}` -> `생성`
+<<<<<<< HEAD
 17. baseline Discovery 또는 baseline 문서 보완 Discovery면 `docs/project-structure.md`와 `docs/runtime-flows.md` 생성/갱신 요구를 핵심 변경과 FR에 반영한다.
 18. `기존 Discovery 갱신`인 경우 `{{OUTPUT_PATH}}`와 `{{FILE_RESULT}}`는 갱신 대상 파일과 `갱신`으로 해석한다.
 19. `새 Discovery 생성`이면서 기존 Discovery를 대체하거나 이어받는 경우, 기존 Discovery 문서에 `대체됨` 또는 `후속 주기 참조` 필드를 새 문서 경로로 갱신한다.
@@ -301,6 +319,15 @@ Discovery 문서의 `# 3. 문제점의 요약` 중 `현재 상태`를 채우기 
 21. 추론 불가능하거나 사용자 확인이 필요한 항목만 플레이스홀더로 남긴다.
 22. `새 Discovery 생성`인 경우에만 `docs/discovery/index.md` 전역 인덱스에 새 행을 추가한다.
 23. `기존 Discovery 갱신`인 경우 전역 인덱스에 새 행을 추가하지 않는다.
+=======
+16. Discovery가 구조 또는 runtime baseline 갭을 직접 다루면 `docs/project-structure.md`와 `docs/runtime-flows.md` 갱신 요구를 핵심 변경과 FR에 반영한다.
+17. `기존 Discovery 갱신`인 경우 `{{OUTPUT_PATH}}`와 `{{FILE_RESULT}}`는 갱신 대상 파일과 `갱신`으로 해석한다.
+18. `새 Discovery 생성`이면서 기존 Discovery를 대체하거나 이어받는 경우, 기존 Discovery 문서에 `대체됨` 또는 `후속 주기 참조` 필드를 새 문서 경로로 갱신한다.
+19. Discovery 문서에서는 추론 가능한 플레이스홀더를 적극적으로 실제 내용으로 치환한다.
+20. 추론 불가능하거나 사용자 확인이 필요한 항목만 플레이스홀더로 남긴다.
+21. `새 Discovery 생성`인 경우에만 `docs/discovery/index.md` 전역 인덱스에 새 행을 추가한다.
+22. `기존 Discovery 갱신`인 경우 전역 인덱스에 새 행을 추가하지 않는다.
+>>>>>>> e15c3d2 (feat: introduce lightweight change path, change-req skill, and release feedback loop)
 
 # Global Index Rules
 
@@ -339,7 +366,7 @@ Discovery 문서의 `# 3. 문제점의 요약` 중 `현재 상태`를 채우기 
 - `새 Discovery 생성`이면 생성 경로가 `docs/discovery/<DISCOVERY_ID>.md` 형식을 만족하는지
 - `새 Discovery 생성`이면 Discovery 문서가 생성되었는지
 - `새 Discovery 생성`이면 `docs/discovery/index.md`가 신규 생성 또는 올바르게 갱신되었는지
-- baseline Discovery 또는 baseline 문서 보완 Discovery라면 `docs/project-structure.md`, `docs/runtime-flows.md` 생성/갱신 요구가 문서 본문에 포함됐는지
+- Discovery가 구조 또는 runtime baseline 갭을 다루면 `docs/project-structure.md`, `docs/runtime-flows.md` 갱신 요구가 문서 본문에 포함됐는지
 - `기존 Discovery 갱신`이면 대상 Discovery 문서만 갱신되었는지
 - `기존 Discovery 갱신`이면 새 `DISCOVERY_ID`와 불필요한 파일이 생성되지 않았는지
 - 기존 Discovery 후보 탐색 결과와 판정 근거가 보고 가능한 형태로 정리되었는지
