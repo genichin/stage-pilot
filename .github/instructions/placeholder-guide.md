@@ -56,6 +56,7 @@
 
 대상 경로:
 
+- `.github/templates/bootstrap/baseline-seed.yaml`
 - `.github/templates/project-structure.md`
 - `.github/templates/runtime-flows.md`
 - `.github/templates/discovery/index.md`
@@ -65,9 +66,21 @@
 
 처리 원칙:
 
+- `bootstrap-baseline`은 먼저 `.stagepilot/bootstrap/baseline.yaml` seed를 만들거나 보강한다.
+- greenfield 저장소처럼 관찰 가능한 정보가 부족하면 최소 질문 세트로 seed를 채운다.
 - `bootstrap-baseline`은 baseline 문서와 index를 초기화하지만 Discovery 문서를 만들지 않는다.
-- baseline 문서에는 저장소 구조와 실행 흐름의 현재 승인 초안을 남긴다.
+- baseline 문서는 seed를 source of truth로 렌더링하고, 필요하면 저장소 관찰값으로 보강한다.
 - index 문서는 빈 register 골격만 준비하고, 실제 unit 행은 이후 skill이 추가한다.
+
+주요 키:
+
+- `{{BASELINE_MODE}}`
+- `{{BASELINE_SEED_PATH}}`
+- `{{PROJECT_SUMMARY}}`
+- `{{PRIMARY_DOMAIN}}`
+- `{{TECH_STACK_BULLETS}}`
+- `{{PRIMARY_RUNTIME}}`
+- `{{PRIMARY_ENTRYPOINT_BULLETS}}`
 
 ### 3.1 Discovery 템플릿
 

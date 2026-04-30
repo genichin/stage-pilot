@@ -1,9 +1,28 @@
 # Sample Host Project Structure
 
+- Baseline Mode: declared
+- Baseline Seed: .stagepilot/bootstrap/baseline.yaml
 - Status: confirmed
 - Owner: Platform Team
 - Last Updated (KST): 2026-04-30 16:30
 - Source Discovery / Batch: bootstrap-baseline
+
+## Project Summary
+- Python-based API service for curated market data analysis.
+
+## Primary Domain
+- financial analytics
+
+## Tech Stack
+- Python
+- FastAPI
+- PostgreSQL
+
+## Primary Runtime
+- Type: api-service
+- Planned Entry Points:
+- uvicorn src.main:app :: serve the HTTP API
+- python -m src.jobs.refresh_market_data :: refresh curated market data snapshots
 
 ## Purpose
 - This document captures the initial repository structure baseline after StagePilot bootstrap.
@@ -18,8 +37,10 @@
 ```text
 .
 ├── .github/
+├── .stagepilot/
 ├── docs/
 ├── src/
+├── scripts/
 ├── tests/
 └── README.md
 ```
@@ -28,10 +49,14 @@
 
 - `.github/`
 	- StagePilot skills, templates, and host instructions installed into the repository.
+- `.stagepilot/`
+	- bootstrap declaration seed used to render the baseline documents.
 - `docs/`
 	- Active SDLC docs, index files, and cross-cutting baseline references.
 - `src/`
 	- Product and service implementation code.
+- `scripts/`
+	- developer and operator helper commands.
 - `tests/`
 	- Automated checks and regression coverage.
 
@@ -39,17 +64,20 @@
 
 - Delivery documents under `docs/` must not be treated as implementation modules.
 - `src/` can evolve independently, but structure changes should update this baseline.
+- `.stagepilot/bootstrap/baseline.yaml` should be updated when the declared project identity changes before code exists.
 - Tooling automation under `.github/` must not overwrite host source code.
 
 ## Shared Boundaries
 
 - `.github/` provides SDLC workflow assets.
+- `.stagepilot/` stores bootstrap declarations outside active SDLC units.
 - `docs/` is the source of truth for active SDLC state.
-- `src/` and `tests/` remain host-project owned implementation surfaces.
+- `src/`, `scripts/`, and `tests/` remain host-project owned implementation surfaces.
 
 ## Current Gaps / Planned Changes
 
 - The first real Discovery has not been created yet.
+- Deployment target is still undecided.
 - Actual domain module boundaries will be refined once the first delivery topic is defined.
 
 ## Update Triggers
@@ -60,4 +88,4 @@
 
 ## Change Log
 
-- 2026-04-30: bootstrap-baseline created the initial repository structure baseline.
+- 2026-04-30: bootstrap-baseline created the initial repository structure baseline from `.stagepilot/bootstrap/baseline.yaml`.

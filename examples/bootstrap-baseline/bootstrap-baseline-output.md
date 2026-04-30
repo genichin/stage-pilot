@@ -2,13 +2,22 @@
 
 - Input:
   - fresh host repository after StagePilot install
+- Asked Questions:
+  - `project-summary` -> `Python-based API service for curated market data analysis`
+  - `primary-domain` -> `financial analytics`
+  - `tech-stack` -> `Python, FastAPI, PostgreSQL`
+  - `primary-runtime` -> `api-service`
+  - `primary-entrypoints` -> `uvicorn src.main:app :: serve the HTTP API`, `python -m src.jobs.refresh_market_data :: refresh curated market data snapshots`
 - Created Files:
+  - `.stagepilot/bootstrap/baseline.yaml`
   - `docs/discovery/index.md`
   - `docs/srs/index.md`
   - `docs/batches/index.md`
   - `docs/releases/index.md`
   - `docs/project-structure.md`
   - `docs/runtime-flows.md`
+- Seed Status:
+  - `.stagepilot/bootstrap/baseline.yaml`: created
 - Baseline Status:
   - `docs/project-structure.md`: created
   - `docs/runtime-flows.md`: created
@@ -18,6 +27,7 @@
   - `docs/batches/index.md`: created
   - `docs/releases/index.md`: created
 - Notes:
+  - baseline docs were rendered from `.stagepilot/bootstrap/baseline.yaml`
   - no Discovery document was created
   - no REQ, Batch, or Release unit was opened
 - Next Action:

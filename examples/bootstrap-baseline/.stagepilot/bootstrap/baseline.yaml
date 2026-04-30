@@ -1,0 +1,40 @@
+schema_version: 1
+capture_mode: declared
+
+project:
+  repository_name: sample-host-project
+  display_name: Sample Host Project
+  summary: Python-based API service for curated market data analysis.
+  primary_domain: financial analytics
+
+stack:
+  tech_stack:
+    - Python
+    - FastAPI
+    - PostgreSQL
+
+runtime:
+  primary_runtime: api-service
+  primary_entrypoints:
+    - name: uvicorn src.main:app
+      purpose: serve the HTTP API
+    - name: python -m src.jobs.refresh_market_data
+      purpose: refresh curated market data snapshots
+
+structure:
+  planned_top_level_areas:
+    - path: src/
+      responsibility: application code and background jobs
+    - path: scripts/
+      responsibility: developer and operator helper commands
+    - path: tests/
+      responsibility: automated validation and regression coverage
+
+notes:
+  known_unknowns:
+    - deployment target is undecided
+
+metadata:
+  captured_at_kst: 2026-04-30 16:20
+  source: bootstrap-baseline-questionnaire
+  updated_from: user-answer

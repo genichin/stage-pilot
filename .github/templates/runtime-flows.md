@@ -1,9 +1,15 @@
 # {{PROJECT_NAME}} Runtime Flows
 
+- Baseline Mode: {{BASELINE_MODE:declared|observed|mixed}}
+- Baseline Seed: {{BASELINE_SEED_PATH:.stagepilot/bootstrap/baseline.yaml}}
 - Status: draft | confirmed
 - Owner: {{OWNER_OR_TEAM}}
 - Last Updated (KST): {{UPDATED_AT_KST}}
 - Source Discovery / Batch: {{SOURCE_REF}}
+- Primary Runtime: {{PRIMARY_RUNTIME:cli|api-service|web-app|worker|library|mixed|other}}
+
+## Project Summary
+- {{PROJECT_SUMMARY:one-sentence summary of the project}}
 
 ## Purpose
 - This document is the current approved execution-flow baseline for the project.
@@ -15,36 +21,31 @@
 
 ## Covered Entry Points
 
-- `<entry-point-1>`
-- `<entry-point-2>`
-- `<entry-point-3>`
+{{PRIMARY_ENTRYPOINT_BULLETS:- <entry-point-1> :: <purpose>}}
 
 ## Shared Components
 
-- `<shared component or service 1>`
-- `<shared component or service 2>`
+{{SHARED_COMPONENT_BULLETS:- <shared component or service 1>}}
 
-## Flow: `<flow-name-1>`
+## Flow: `{{FLOW_NAME_1:bootstrap or first runtime flow}}`
 
-1. `<step 1>`
-2. `<step 2>`
-3. `<step 3>`
+{{FLOW_STEPS_1:1. <step 1>
+2. <step 2>
+3. <step 3>}}
 
-## Flow: `<flow-name-2>`
+## Flow: `{{FLOW_NAME_2:secondary runtime flow or operation}}`
 
-1. `<step 1>`
-2. `<step 2>`
-3. `<step 3>`
+{{FLOW_STEPS_2:1. <step 1>
+2. <step 2>
+3. <step 3>}}
 
 ## Flow Constraints
 
-- `<flow constraint 1>`
-- `<flow constraint 2>`
+{{FLOW_CONSTRAINT_BULLETS:- <flow constraint 1>}}
 
 ## Current Gaps / Planned Changes
 
-- `<gap or planned flow change 1>`
-- `<gap or planned flow change 2>`
+{{CURRENT_GAPS_BULLETS:- <gap or planned flow change 1>}}
 
 ## Update Triggers
 
@@ -54,4 +55,4 @@
 
 ## Change Log
 
-- {{CHANGE_LOG_1}}
+{{CHANGE_LOG_BULLETS:- - <change log entry>}}

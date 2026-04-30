@@ -11,6 +11,8 @@ This skill initializes the StagePilot baseline outside the normal Discovery -> R
 
 `docs/project-structure.md`, `docs/runtime-flows.md`, 그리고 active index 문서는 첫 real Discovery 전에 준비하는 bootstrap 산출물이다. 이 skill은 baseline과 index를 먼저 만들고, 첫 Discovery가 실제 제품/서비스 변경 주제로 시작되도록 만든다.
 
+greenfield 저장소처럼 읽을 코드나 설정이 아직 없으면, 이 skill은 사용자에게 최소 질문 세트를 묻고 `.stagepilot/bootstrap/baseline.yaml` seed를 만든 뒤 baseline 문서를 렌더링한다.
+
 # When to use
 
 다음 상황에서 사용한다.
@@ -31,8 +33,10 @@ This skill initializes the StagePilot baseline outside the normal Discovery -> R
 
 - 현재 저장소 루트와 디렉터리 구조
 - `docs/discovery/`, `docs/srs/`, `docs/batches/`, `docs/releases/` 존재 여부
+- `.stagepilot/bootstrap/baseline.yaml` 존재 여부
 - `docs/project-structure.md`, `docs/runtime-flows.md` 존재 여부
 - 템플릿 파일
+	- `.github/templates/bootstrap/baseline-seed.yaml`
 	- `.github/templates/discovery/index.md`
 	- `.github/templates/srs/index.md`
 	- `.github/templates/batches/index.md`
@@ -53,6 +57,7 @@ This skill initializes the StagePilot baseline outside the normal Discovery -> R
 ## 1. 생성 대상
 
 - 아래 경로가 없으면 생성한다.
+	- `.stagepilot/bootstrap/baseline.yaml`
 	- `docs/discovery/index.md`
 	- `docs/srs/index.md`
 	- `docs/batches/index.md`
@@ -62,12 +67,51 @@ This skill initializes the StagePilot baseline outside the normal Discovery -> R
 - 이미 존재하는 파일은 임의로 덮어쓰지 않는다.
 - 일부만 없는 경우에는 누락된 파일만 생성한다.
 
+## 1.5 최소 질문 세트
+
+- 저장소 관찰만으로 baseline 핵심 정보가 부족하면 먼저 질문을 수행한다.
+- 질문은 아래 다섯 개를 기본 세트로 사용한다.
+	- `project-summary`
+		- 질문: `이 프로젝트를 한 문장으로 설명하면 무엇인가?`
+		- 답변 형식: 한 문장 자유 텍스트
+	- `primary-domain`
+		- 질문: `이 프로젝트의 주요 도메인은 무엇인가?`
+		- 답변 형식: 짧은 명사구 또는 분야명
+	- `tech-stack`
+		- 질문: `계획 중인 주 언어, 프레임워크, 핵심 인프라는 무엇인가?`
+		- 답변 형식: 쉼표로 구분한 목록
+	- `primary-runtime`
+		- 질문: `계획 중인 주 실행 형태는 무엇인가?`
+		- 답변 형식: `cli` | `api-service` | `web-app` | `worker` | `library` | `mixed` | `other`
+	- `primary-entrypoints`
+		- 질문: `대표 진입점 1~3개를 적어 달라.`
+		- 답변 형식: 줄마다 `name :: purpose`
+- 아래 질문은 선택 입력이다.
+	- `planned-top-level-areas`
+		- 질문: `이미 알고 있는 top-level 경로가 있으면 적어 달라.`
+		- 답변 형식: 줄마다 `path :: responsibility`
+	- `known-unknowns`
+		- 질문: `아직 미정인 핵심 항목이 있으면 적어 달라.`
+		- 답변 형식: 줄마다 항목 하나
+- 이미 읽을 수 있는 저장소 증거가 있으면 질문 수를 줄이고, seed의 비어 있는 값만 보충한다.
+
+## 1.6 seed 파일 source-of-truth 규칙
+
+- bootstrap 질문 결과와 저장소 관찰 결과의 합성 source of truth는 `.stagepilot/bootstrap/baseline.yaml`이다.
+- seed 파일은 active SDLC unit가 아니라 bootstrap 선언 파일이다.
+- seed 파일이 있으면 baseline 문서 생성과 갱신 시 이를 우선 읽는다.
+- seed 파일이 없고 저장소 증거가 충분하지 않으면 질문 없이 baseline 문서를 추정 생성하지 않는다.
+- 저장소 관찰값과 사용자 답변이 함께 있으면 `capture_mode`는 `mixed`다.
+- 저장소 관찰값만으로 충분하면 `capture_mode`는 `observed`다.
+- 사용자 선언이 중심이고 저장소 관찰값은 보조면 `capture_mode`는 `declared`다.
+
 ## 2. baseline 문서 작성 원칙
 
-- `docs/project-structure.md`는 현재 저장소의 top-level 구조, 주요 패키지/모듈 책임, 의존 경계, 현재 구조 gap을 기준으로 초안을 채운다.
-- `docs/runtime-flows.md`는 현재 저장소의 대표 entry point, 실행 흐름, 공용 컴포넌트, 흐름 제약을 기준으로 초안을 채운다.
+- `docs/project-structure.md`는 seed의 `project`, `stack`, `runtime`, `structure` 값을 먼저 반영하고, 저장소 관찰 결과가 있으면 보강한다.
+- `docs/runtime-flows.md`는 seed의 `runtime`과 `notes` 값을 먼저 반영하고, 저장소 관찰 결과가 있으면 보강한다.
 - 입력만으로 알 수 없는 항목은 의미 있는 플레이스홀더로 남기되, 추론 가능한 구조 정보는 실제 문장으로 채운다.
 - baseline 문서의 `Source Discovery / Batch`는 bootstrap 산출물임을 드러내는 값으로 채운다.
+- baseline 문서는 `declared`, `observed`, `mixed` 중 어느 모드로 렌더링되었는지와 seed 경로를 드러내야 한다.
 
 ## 3. index 작성 원칙
 
@@ -84,15 +128,19 @@ This skill initializes the StagePilot baseline outside the normal Discovery -> R
 # Execution Procedure
 
 1. 저장소에서 active docs 루트와 baseline 파일 존재 여부를 확인한다.
-2. 누락된 디렉터리가 있으면 `docs/discovery`, `docs/srs`, `docs/batches`, `docs/releases`를 먼저 준비한다.
-3. 누락된 index 파일을 각 템플릿으로 생성한다.
-4. 누락된 baseline 파일이 있으면 현재 저장소 상태를 반영해 `docs/project-structure.md`와 `docs/runtime-flows.md`를 생성한다.
-5. 이미 존재하는 파일은 보존하고, 필요한 경우에만 누락 복구 사실을 결과에 기록한다.
-6. 완료 후 다음 단계로 `new-discovery`를 사용해 첫 real Discovery를 시작하도록 안내한다.
+2. `.stagepilot/bootstrap/baseline.yaml`이 없거나 핵심 필드가 비어 있으면 저장소 관찰로 채울 수 있는 값과 질문이 필요한 값을 분리한다.
+3. 저장소 관찰만으로 부족하면 최소 질문 세트를 사용해 사용자 선언 입력을 수집한다.
+4. `.github/templates/bootstrap/baseline-seed.yaml`를 기준으로 `.stagepilot/bootstrap/baseline.yaml`을 생성 또는 보강한다.
+5. 누락된 디렉터리가 있으면 `docs/discovery`, `docs/srs`, `docs/batches`, `docs/releases`를 먼저 준비한다.
+6. 누락된 index 파일을 각 템플릿으로 생성한다.
+7. seed 파일과 저장소 상태를 반영해 `docs/project-structure.md`와 `docs/runtime-flows.md`를 생성 또는 보강한다.
+8. 이미 존재하는 파일은 보존하고, 필요한 경우에만 누락 복구 또는 seed 반영 사실을 결과에 기록한다.
+9. 완료 후 다음 단계로 `new-discovery`를 사용해 첫 real Discovery를 시작하도록 안내한다.
 
 # Output Expectations
 
 - 생성 또는 복구한 파일 목록
+- seed 파일 상태 (`created` | `preserved` | `updated`)
 - baseline 문서 상태 (`created` | `preserved` | `missing-information`)
 - index 문서 상태 (`created` | `preserved`)
 - 첫 real Discovery에서 다뤄야 할 주제 후보 또는 다음 action
@@ -100,5 +148,7 @@ This skill initializes the StagePilot baseline outside the normal Discovery -> R
 # Validation
 
 - 생성한 파일 경로가 active docs 구조와 일치하는지 확인한다.
+- `.stagepilot/bootstrap/baseline.yaml`의 필수 필드가 비어 있지 않은지 확인한다.
 - baseline 문서와 index에 남아 있는 플레이스홀더가 정말 사람 결정이 필요한 값인지 점검한다.
+- baseline 문서의 `Project Summary`, `Primary Domain`, `Tech Stack`, `Primary Runtime`가 seed와 모순되지 않는지 확인한다.
 - Discovery 문서를 생성하지 않았는지 확인한다.

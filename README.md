@@ -15,6 +15,18 @@ bash .vendor/stage-pilot/bootstrap/install.sh .
 
 설치 직후에는 Copilot Chat에서 `/bootstrap-baseline`을 먼저 실행해 `docs/project-structure.md`, `docs/runtime-flows.md`, 각 active index를 초기화한다. 이 단계는 Discovery/REQ/Batch/Release 중 어느 것도 아니며, 첫 real Discovery 전에 수행하는 bootstrap 단계다.
 
+greenfield 저장소처럼 읽을 코드나 설정이 없으면 `bootstrap-baseline`은 사용자에게 최소 질문 세트를 묻고, 답변을 `.stagepilot/bootstrap/baseline.yaml`에 저장한 뒤 baseline 문서를 렌더링한다.
+
+seed 파일만 먼저 만들고 싶으면 helper를 사용할 수 있다.
+
+```bash
+# vendor wrapper 사용
+bash .vendor/stage-pilot/bootstrap/stagepilot.sh bootstrap-seed .
+
+# 설치된 script 직접 사용
+python3 .github/scripts/stagepilot-bootstrap-seed.py .
+```
+
 bootstrap-baseline 실행 결과 예시는 `examples/bootstrap-baseline/`에 포함돼 있다.
 
 ## 업데이트
@@ -101,6 +113,7 @@ fresh host 저장소에서 baseline 초기화가 아직 끝나지 않았으면 d
 | `.github/skills/bootstrap-baseline/SKILL.md` | 프로젝트 시작 시 baseline 문서와 active index를 초기화하는 bootstrap entrypoint |
 | `.github/skills/` | active skill entrypoint 집합 |
 | `.github/skills/run-sdlc/SKILL.md` | 현재 상태를 읽고 다음 skill을 안내하는 orchestrator |
+| `.github/templates/bootstrap/baseline-seed.yaml` | bootstrap 질문 결과를 저장하는 seed 템플릿 |
 | `.github/templates/discovery/discovery.md` | Discovery 생성 템플릿 |
 | `.github/templates/project-structure.md` | baseline 구조 문서 템플릿 |
 | `.github/templates/runtime-flows.md` | baseline 실행 흐름 문서 템플릿 |
@@ -158,11 +171,19 @@ Discovery는 구현 완료 상태를 표현하는 단위가 아니다. Discovery
 새 저장소에 StagePilot을 처음 적용할 때는 Discovery를 만들기 전에 `bootstrap-baseline`을 먼저 실행한다.
 
 1. `bootstrap-baseline`
-	`docs/project-structure.md`, `docs/runtime-flows.md`, `docs/discovery/index.md`, `docs/srs/index.md`, `docs/batches/index.md`, `docs/releases/index.md`를 초기화한다.
+	필요하면 최소 질문 세트(`project-summary`, `primary-domain`, `tech-stack`, `primary-runtime`, `primary-entrypoints`)를 먼저 묻고, 답을 `.stagepilot/bootstrap/baseline.yaml`에 저장한 뒤 `docs/project-structure.md`, `docs/runtime-flows.md`, `docs/discovery/index.md`, `docs/srs/index.md`, `docs/batches/index.md`, `docs/releases/index.md`를 렌더링한다.
 	이 단계는 bootstrap 단계이며, Discovery/REQ/Batch/Release 단위로 계산하지 않는다.
 	샘플 결과는 `examples/bootstrap-baseline/bootstrap-baseline-output.md`를 참고한다.
 2. `new-discovery`
 	baseline 초기화가 끝난 뒤 첫 real Discovery를 실제 제품/서비스 변경 주제로 생성한다.
+
+이미 코드와 실행 경로가 있는 기존 저장소에 StagePilot을 처음 적용할 때도 시작점은 동일하게 `bootstrap-baseline`이다. 차이는 bootstrap이 질문만으로 baseline을 만들지 않고, 현재 저장소 구조와 실행 흔적을 먼저 읽어 `observed` 또는 `mixed` baseline을 만든다는 점이다.
+
+1. 설치 직후 `python3 .github/scripts/stagepilot-doctor.py .` 또는 `bash .vendor/stage-pilot/bootstrap/stagepilot.sh doctor .`로 누락된 bootstrap 파일과 active docs 상태를 확인한다.
+2. active SDLC 문서가 아직 없다면 `/bootstrap-baseline`을 실행해 기존 저장소 기준의 `docs/project-structure.md`, `docs/runtime-flows.md`, active index를 만든다.
+3. 저장소만으로 프로젝트 정체성이나 계획 runtime을 충분히 설명할 수 없으면 `python3 .github/scripts/stagepilot-bootstrap-seed.py .` 또는 `bash .vendor/stage-pilot/bootstrap/stagepilot.sh bootstrap-seed .`로 `.stagepilot/bootstrap/baseline.yaml`을 먼저 만들고, 그 다음 `/bootstrap-baseline`을 실행해 baseline을 `mixed`로 보강한다.
+4. bootstrap이 끝난 뒤 첫 real Discovery는 baseline 생성 자체가 아니라 현재 진행하려는 기능 변경, 운영 이슈, 기술 결정 중 하나를 주제로 `new-discovery`에서 시작한다.
+5. 이미 `docs/discovery/`, `docs/srs/`, `docs/batches/`, `docs/releases/` 아래 active unit가 운영 중인 저장소라면 bootstrap을 광범위하게 다시 수행하지 말고 `run-sdlc <ID>` 또는 해당 active unit의 skill로 이어서 처리한다. 이 경우 `bootstrap-baseline`은 단순 누락 복구에만 사용한다.
 
 ### 6.1 Requirements Phase
 

@@ -1,9 +1,26 @@
 # {{PROJECT_NAME}} Project Structure
 
+- Baseline Mode: {{BASELINE_MODE:declared|observed|mixed}}
+- Baseline Seed: {{BASELINE_SEED_PATH:.stagepilot/bootstrap/baseline.yaml}}
 - Status: draft | confirmed
 - Owner: {{OWNER_OR_TEAM}}
 - Last Updated (KST): {{UPDATED_AT_KST}}
 - Source Discovery / Batch: {{SOURCE_REF}}
+
+## Project Summary
+- {{PROJECT_SUMMARY:one-sentence summary of the project}}
+
+## Primary Domain
+- {{PRIMARY_DOMAIN:short domain phrase or undecided}}
+
+## Tech Stack
+{{TECH_STACK_BULLETS:- <planned stack item 1>
+- <planned stack item 2>}}
+
+## Primary Runtime
+- Type: {{PRIMARY_RUNTIME:cli|api-service|web-app|worker|library|mixed|other}}
+- Planned Entry Points:
+{{PRIMARY_ENTRYPOINT_BULLETS:- <entrypoint> :: <purpose>}}
 
 ## Purpose
 - This document is the current approved repository and package structure baseline.
@@ -16,35 +33,25 @@
 ## Top-Level Structure
 
 ```text
-.
-├── <top-level directories>
-└── <top-level files>
+{{TOP_LEVEL_STRUCTURE_TREE:<text tree baseline>}}
 ```
 
 ## Package / Module Responsibilities
 
-- `<path-or-package-1>`
-	- <responsibility summary>
-- `<path-or-package-2>`
-	- <responsibility summary>
-- `<path-or-package-3>`
-	- <responsibility summary>
+{{MODULE_RESPONSIBILITY_BULLETS:- `<path-or-package-1>`
+  - <responsibility summary>}}
 
 ## Dependency Rules
 
-- `<dependency rule 1>`
-- `<dependency rule 2>`
-- `<dependency rule 3>`
+{{DEPENDENCY_RULE_BULLETS:- <dependency rule 1>}}
 
 ## Shared Boundaries
 
-- `<shared boundary 1>`
-- `<shared boundary 2>`
+{{SHARED_BOUNDARY_BULLETS:- <shared boundary 1>}}
 
 ## Current Gaps / Planned Changes
 
-- `<gap or planned structural change 1>`
-- `<gap or planned structural change 2>`
+{{CURRENT_GAPS_BULLETS:- <gap or planned structural change 1>}}
 
 ## Update Triggers
 
@@ -54,4 +61,4 @@
 
 ## Change Log
 
-- {{CHANGE_LOG_1}}
+{{CHANGE_LOG_BULLETS:- - <change log entry>}}
