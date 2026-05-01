@@ -205,6 +205,7 @@ Discovery는 구현 완료 상태를 표현하는 단위가 아니다. Discovery
 	baseline 초기화 이후 사용자 요청, 운영 피드백, issue 입력을 실제 변경 주제의 Discovery 초안으로 만든다.
 2. `confirm-discovery`
 	Discovery를 저장소 현실과 대조하고 REQ drafting 가능 상태로 `confirmed` 전환한다.
+	선행 품질 점검이 필요하면 보조 helper인 `review-discovery`로 누락, OQ 후보, 중복, 불필요 서술을 먼저 정리할 수 있다. 이 helper는 상태 전환 없이 review만 수행한다.
 3. `draft-req`
 	confirmed Discovery에서 승인 가능한 REQ 문서를 만든다.
 4. `confirm-req`
