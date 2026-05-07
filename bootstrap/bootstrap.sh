@@ -26,6 +26,7 @@ ensure_host_structure() {
     ".github/runbooks/services"
     ".github/scripts"
     ".github/templates"
+    ".claude/commands"
     "docs/discovery"
     "docs/srs"
     "docs/batches"

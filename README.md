@@ -396,6 +396,17 @@ Discovery는 구현 완료 상태를 표현하는 단위가 아니다. Discovery
 - `docs/batches/index.md`
 - `docs/releases/index.md`
 
+### 12.1 새 skill 추가 시 체크리스트
+
+skill을 새로 추가할 때는 아래 두 파일을 반드시 함께 추가한다.
+
+| 파일 | 역할 |
+| --- | --- |
+| `.github/skills/<name>/SKILL.md` | Copilot용 skill 본문 |
+| `.claude/commands/<name>.md` | Claude Code용 wrapper (내용: `Follow the instructions in \`.github/skills/<name>/SKILL.md\` exactly.`) |
+
+skill을 삭제하거나 이름을 변경할 때도 두 경로를 함께 처리한다.
+
 ## 13. 빠른 점검표
 
 ### 13.1 Requirements 진입 전

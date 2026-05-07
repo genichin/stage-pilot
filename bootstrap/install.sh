@@ -68,6 +68,7 @@ done
 HOST_ROOT="${ARGS[0]:-$(pwd)}"
 POLICY="${ARGS[1]:-${STAGEPILOT_CONFLICT_POLICY:-preserve}}"
 TARGET_GITHUB="${HOST_ROOT}/.github"
+TARGET_CLAUDE="${HOST_ROOT}/CLAUDE.md"
 STAGEPILOT_BEGIN="<!-- STAGEPILOT:BEGIN -->"
 STAGEPILOT_END="<!-- STAGEPILOT:END -->"
 
@@ -177,11 +178,95 @@ merge_stagepilot_section() {
   rm -f "${payload_file}" "${output_file}"
 }
 
+install_claude_section() {
+  local src_copilot="${SOURCE_GITHUB}/copilot-instructions.md"
+  [ -f "${src_copilot}" ] || { log "copilot-instructions.md not found; skipping CLAUDE.md"; return 0; }
+
+  if [ ! -e "${TARGET_CLAUDE}" ]; then
+    local payload_file
+    payload_file="$(mktemp)"
+    if grep -Fq "${STAGEPILOT_BEGIN}" "${src_copilot}" && grep -Fq "${STAGEPILOT_END}" "${src_copilot}"; then
+      awk -v begin="${STAGEPILOT_BEGIN}" -v end="${STAGEPILOT_END}" '
+        $0 == begin { in_block=1; next }
+        $0 == end { in_block=0; exit }
+        in_block { print }
+      ' "${src_copilot}" > "${payload_file}"
+    else
+      cat "${src_copilot}" > "${payload_file}"
+    fi
+    if [ "${DRY_RUN}" -eq 1 ]; then
+      log "[dry-run] create: CLAUDE.md"
+    else
+      {
+        printf '%s\n' "${STAGEPILOT_BEGIN}"
+        cat "${payload_file}"
+        printf '%s\n' "${STAGEPILOT_END}"
+      } > "${TARGET_CLAUDE}"
+    fi
+    rm -f "${payload_file}"
+  else
+    merge_stagepilot_section "${src_copilot}" "${TARGET_CLAUDE}"
+  fi
+}
+
+# NOTE: skill을 추가/삭제/이름변경할 때는 .github/skills/<name>/SKILL.md와
+# .claude/commands/<name>.md를 반드시 함께 처리한다. (README 12.1 참고)
+install_claude_commands() {
+  local source_commands="${PACKAGE_ROOT}/.claude/commands"
+  local target_commands="${HOST_ROOT}/.claude/commands"
+
+  [ -d "${source_commands}" ] || { log "no .claude/commands source; skipping"; return 0; }
+
+  while IFS= read -r -d '' src_file; do
+    local cmd_name
+    cmd_name="$(basename "${src_file}")"
+    local dst_file="${target_commands}/${cmd_name}"
+
+    if [ ! -e "${dst_file}" ]; then
+      if [ "${DRY_RUN}" -eq 1 ]; then
+        log "[dry-run] create: .claude/commands/${cmd_name}"
+      else
+        mkdir -p "${target_commands}"
+        cp -a "${src_file}" "${dst_file}"
+      fi
+      claude_installed=$((claude_installed + 1))
+      continue
+    fi
+
+    if cmp -s "${src_file}" "${dst_file}"; then
+      claude_skipped=$((claude_skipped + 1))
+      continue
+    fi
+
+    case "${POLICY}" in
+      replace)
+        if [ "${DRY_RUN}" -eq 1 ]; then
+          log "[dry-run] replace: .claude/commands/${cmd_name}"
+        else
+          cp -a "${src_file}" "${dst_file}"
+        fi
+        claude_installed=$((claude_installed + 1))
+        ;;
+      preserve)
+        claude_skipped=$((claude_skipped + 1))
+        ;;
+      fail)
+        printf '[install] CONFLICT: .claude/commands/%s\n' "${cmd_name}" >&2
+        failed=$((failed + 1))
+        ;;
+    esac
+  done < <(find "${source_commands}" -maxdepth 1 -name "*.md" -print0 | sort -z)
+
+  log "claude_commands: installed=${claude_installed} skipped=${claude_skipped}"
+}
+
 copied=0
 skipped=0
 conflicted=0
 failed=0
 merged=0
+claude_installed=0
+claude_skipped=0
 
 mkdir -p "${TARGET_GITHUB}"
 
@@ -254,6 +339,9 @@ if [ "${CLEANUP_LEGACY_BASE}" -eq 1 ]; then
     log "legacy path not found, skip cleanup: ${LEGACY_BASE_DIR}"
   fi
 fi
+
+install_claude_section
+install_claude_commands
 
 log "host_root=${HOST_ROOT}"
 log "source=${SOURCE_GITHUB}"
