@@ -7,7 +7,7 @@
 - release template와 docs-only verification structure를 구현했다.
 
 ## Changed Files
-- .github/templates/releases/release.md
+- .stage-pilot/templates/releases/release.md
 - README.md
 
 ## Execution Log

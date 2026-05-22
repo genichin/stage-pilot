@@ -17,7 +17,7 @@
 
 ## Impacted Area
 - Docs: docs/releases/rel-001_20260428_docs_release_hardening.md, README.md
-- Modules: bootstrap/stagepilot.sh, .github/scripts/stagepilot-doctor.py
+- Modules: bootstrap/stagepilot.sh, .stage-pilot/scripts/stagepilot-doctor.py
 - Tests: doctor release feedback summary validation
 
 ## Notes
@@ -90,7 +90,7 @@
   - docs/releases/rel-001_20260428_docs_release_hardening.md
   - README.md
 - Modules:
-  - .github/scripts/stagepilot-doctor.py
+  - .stage-pilot/scripts/stagepilot-doctor.py
 - Tests:
   - doctor feedback summary sample
 

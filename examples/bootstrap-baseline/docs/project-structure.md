@@ -65,11 +65,11 @@
 - Delivery documents under `docs/` must not be treated as implementation modules.
 - `src/` can evolve independently, but structure changes should update this baseline.
 - `.stagepilot/bootstrap/baseline.yaml` should be updated when the declared project identity changes before code exists.
-- Tooling automation under `.github/` must not overwrite host source code.
+- Tooling automation under `.stage-pilot/` must not overwrite host source code.
 
 ## Shared Boundaries
 
-- `.github/` provides SDLC workflow assets.
+- `.stage-pilot/` provides SDLC workflow assets.
 - `.stagepilot/` stores bootstrap declarations outside active SDLC units.
 - `docs/` is the source of truth for active SDLC state.
 - `src/`, `scripts/`, and `tests/` remain host-project owned implementation surfaces.

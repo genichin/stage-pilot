@@ -1,8 +1,15 @@
 ---
 name: new-discovery
 description: "Use when: deciding whether to update an existing Discovery document or start a new one, running /new-discovery with or without parameters, drafting docs/discovery/dcy-<id>_<YYYYMMDD>_<topic-slug>.md for a real product/service change, generating Discovery documents, or updating docs/discovery/index.md after baseline initialization is ready."
+version: 1.0.1
+author: Justin Ko
+license: private
 argument-hint: "예: 사용자 로그인 기능 추가 - OAuth2 소셜 로그인, 세션 관리, 로그아웃 처리"
 user-invocable: true
+metadata:
+  hermes:
+    tags: [stage-pilot, discovery, documentation, sdlc, planning]
+    related_skills: [bootstrap-baseline, review-discovery, confirm-discovery, run-sdlc]
 ---
 
 # Purpose
@@ -46,11 +53,23 @@ This skill decides whether an incoming request should update an existing Discove
 - 저장소 문맥
 	- 현재 저장소 상태
 	- 저장소 현황 탐색 결과
-- 템플릿 파일
-	- `.stage-pilot/templates/discovery/discovery.md`
-	- `.stage-pilot/templates/discovery/index.md`
-	- `.stage-pilot/templates/project-structure.md`
-	- `.stage-pilot/templates/runtime-flows.md`
+- 템플릿의 논리 경로
+	- `stage-pilot/templates/discovery/discovery.md`
+	- `stage-pilot/templates/discovery/index.md`
+	- `stage-pilot/templates/project-structure.md`
+	- `stage-pilot/templates/runtime-flows.md`
+
+## Template path resolution
+
+- 템플릿은 하나의 물리 경로만 고정하지 말고 `stage-pilot/templates/...`를 논리 경로로 취급한다.
+- 물리 경로는 다음 순서로 해석한다.
+	1. `.stage-pilot/templates/...`
+	2. `.vendor/stage-pilot/templates/...`
+	3. `~/.stage-pilot/templates/...`
+- 여러 후보가 동시에 존재하면 가장 우선순위가 높은 한 곳만 사용하고, 서로 다른 설치 위치의 템플릿을 섞지 않는다.
+- 템플릿 source path와 생성 target path를 혼동하지 않는다.
+	- source: `stage-pilot/templates/...`
+	- target: `docs/discovery/<DISCOVERY_ID>.md`, `docs/discovery/index.md`, 이후 필요 시 참조하는 `docs/project-structure.md`, `docs/runtime-flows.md`
 
 입력 해석 규칙:
 - GitHub issue link 또는 issue 번호가 있으면 해당 이슈의 제목, 본문, 링크를 기준 입력으로 사용한다.
@@ -144,9 +163,9 @@ This skill decides whether an incoming request should update an existing Discove
 ## 4. 문서 생성/갱신 규칙
 
 - 판정 결과가 `새 Discovery 생성`이면 새 파일을 `docs/discovery/<DISCOVERY_ID>.md` 경로로 생성한다.
-- `새 Discovery 생성`인 경우 Discovery 문서는 `.stage-pilot/templates/discovery/discovery.md`를 기반으로 생성한다.
-- `docs/discovery/index.md`가 없으면 `.stage-pilot/templates/discovery/index.md`를 기반으로 생성한다.
-- Discovery가 구조/런타임 baseline 갭을 직접 다루는 경우, `.stage-pilot/templates/project-structure.md`와 `.stage-pilot/templates/runtime-flows.md`를 이후 산출물 템플릿 참조로 취급한다.
+- `새 Discovery 생성`인 경우 `stage-pilot/templates/discovery/discovery.md`에 해당하는 실제 template source를 해석한 뒤 Discovery 문서를 생성한다.
+- `docs/discovery/index.md`가 없으면 `stage-pilot/templates/discovery/index.md`에 해당하는 실제 template source를 해석한 뒤 생성한다.
+- Discovery가 구조/런타임 baseline 갭을 직접 다루는 경우, `stage-pilot/templates/project-structure.md`와 `stage-pilot/templates/runtime-flows.md`를 이후 산출물의 논리 템플릿 참조로 취급한다.
 - `기존 Discovery 갱신`이면 대상 Discovery 문서를 갱신한다.
 - 동일 경로가 이미 있으면 덮어쓰지 말고 다음 ID를 재계산한다.
 - 불필요한 파일은 만들지 않는다.
@@ -228,7 +247,7 @@ This skill decides whether an incoming request should update an existing Discove
 ## `# 9. 파일 처리 결과`
 
 - 생성 결과와 최소 참조 문서를 채운다.
-- Discovery가 구조 또는 runtime baseline 갭을 다루면 `.stage-pilot/templates/project-structure.md`와 `.stage-pilot/templates/runtime-flows.md`를 참조 문서에 포함한다.
+- Discovery가 구조 또는 runtime baseline 갭을 다루면 `stage-pilot/templates/project-structure.md`와 `stage-pilot/templates/runtime-flows.md`를 참조 문서에 포함한다.
 - 참조 문서가 없으면 `없음`이라고 쓴다.
 
 ## `# 10. 사용자 결정 필요 항목 요약`

@@ -24,7 +24,7 @@ seed 파일만 먼저 만들고 싶으면 helper를 사용할 수 있다.
 bash .vendor/stage-pilot/bootstrap/stagepilot.sh bootstrap-seed .
 
 # 설치된 script 직접 사용
-python3 .github/scripts/stagepilot-bootstrap-seed.py .
+python3 .stage-pilot/scripts/stagepilot-bootstrap-seed.py .
 ```
 
 bootstrap-baseline 실행 결과 예시는 `examples/bootstrap-baseline/`에 포함돼 있다.
@@ -52,13 +52,13 @@ bash .vendor/stage-pilot/bootstrap/update.sh --skip-install .
 bash .vendor/stage-pilot/bootstrap/stagepilot.sh doctor .
 
 # 설치된 .github/scripts를 직접 실행
-python3 .github/scripts/stagepilot-doctor.py .
+python3 .stage-pilot/scripts/stagepilot-doctor.py .
 
 # active docs가 반드시 있어야 하는 workspace라면 엄격 모드 사용
-python3 .github/scripts/stagepilot-doctor.py --strict-missing-docs .
+python3 .stage-pilot/scripts/stagepilot-doctor.py --strict-missing-docs .
 
 # Markdown 리포트를 파일로 저장
-python3 .github/scripts/stagepilot-doctor.py --report artifacts/stagepilot-doctor.md .
+python3 .stage-pilot/scripts/stagepilot-doctor.py --report artifacts/stagepilot-doctor.md .
 ```
 
 `stagepilot-doctor`는 아래 항목을 검사한다.
@@ -122,16 +122,16 @@ fresh host 저장소에서 baseline 초기화가 아직 끝나지 않았으면 d
 
 | 경로 | 역할 |
 | --- | --- |
-| `.github/skills/bootstrap-baseline/SKILL.md` | 프로젝트 시작 시 baseline 문서와 active index를 초기화하는 bootstrap entrypoint |
-| `.github/skills/` | active skill entrypoint 집합 |
-| `.github/skills/run-sdlc/SKILL.md` | 현재 상태를 읽고 다음 skill을 안내하는 orchestrator |
-| `.github/templates/bootstrap/baseline-seed.yaml` | bootstrap 질문 결과를 저장하는 seed 템플릿 |
-| `.github/templates/discovery/discovery.md` | Discovery 생성 템플릿 |
-| `.github/templates/project-structure.md` | baseline 구조 문서 템플릿 |
-| `.github/templates/runtime-flows.md` | baseline 실행 흐름 문서 템플릿 |
-| `.github/templates/interface-contract.md` | 선택형 인터페이스 계약 문서 템플릿 |
-| `.github/templates/data-model.md` | 선택형 데이터 모델 문서 템플릿 |
-| `.github/instructions/placeholder-guide.md` | placeholder 치환 규칙과 active 경로 가이드 |
+| `.stage-pilot/skills/bootstrap-baseline/SKILL.md` | 프로젝트 시작 시 baseline 문서와 active index를 초기화하는 bootstrap entrypoint |
+| `.stage-pilot/skills/` | active skill entrypoint 집합 |
+| `.stage-pilot/skills/run-sdlc/SKILL.md` | 현재 상태를 읽고 다음 skill을 안내하는 orchestrator |
+| `.stage-pilot/templates/bootstrap/baseline-seed.yaml` | bootstrap 질문 결과를 저장하는 seed 템플릿 |
+| `.stage-pilot/templates/discovery/discovery.md` | Discovery 생성 템플릿 |
+| `.stage-pilot/templates/project-structure.md` | baseline 구조 문서 템플릿 |
+| `.stage-pilot/templates/runtime-flows.md` | baseline 실행 흐름 문서 템플릿 |
+| `.stage-pilot/templates/interface-contract.md` | 선택형 인터페이스 계약 문서 템플릿 |
+| `.stage-pilot/templates/data-model.md` | 선택형 데이터 모델 문서 템플릿 |
+| `.stage-pilot/instructions/placeholder-guide.md` | placeholder 치환 규칙과 active 경로 가이드 |
 
 ### 4.3 비활성 경로 정책
 

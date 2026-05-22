@@ -28,7 +28,7 @@
 ## Shared Components
 
 - .stagepilot/bootstrap/baseline.yaml
-- `.github/skills/`
+- `.stage-pilot/skills/`
 - `docs/project-structure.md`
 - `docs/*/index.md`
 

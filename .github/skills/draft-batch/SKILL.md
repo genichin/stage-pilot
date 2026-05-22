@@ -17,7 +17,7 @@ This skill creates a new batch delivery unit from approved requirements, chooses
 - `docs/srs/index.md`
 - 대상 REQ 문서들
 - `docs/batches/index.md`
-- `.github/templates/batches/` 아래 템플릿
+- `.stage-pilot/templates/batches/` 아래 템플릿
 
 # Core Rules
 
