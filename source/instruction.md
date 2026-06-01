@@ -58,7 +58,7 @@
 - Planning, Design, Implementation, Verification은 Batch 내부 stage로 다룬다.
 - Release와 Operations는 Release & Feedback phase 내부에서 다룬다.
 - `review-*` stage command는 더 이상 active flow에 포함하지 않고 대응 `confirm-*` 절차에 흡수한다.
-- prompt 기반 stage command는 active 경로에서 사용하지 않고 `.github/skills/` 아래 skill entrypoint만 사용한다.
+- prompt 기반 stage command는 active 경로에서 사용하지 않고 `.stage-pilot/skills/` 아래 skill entrypoint만 사용한다.
 
 ## Global Rules
 

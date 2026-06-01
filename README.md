@@ -388,7 +388,7 @@ Discovery는 구현 완료 상태를 표현하는 단위가 아니다. Discovery
 위 항목이 바뀌면 아래 파일들도 함께 점검한다.
 
 - `source/instruction.md` (설치 시 `.github/copilot-instructions.md`와 `CLAUDE.md`로 fan-out)
-- `.github/skills/run-sdlc/SKILL.md`
+- `skills/run-sdlc/SKILL.md`
 - 관련 `confirm-*`, `draft-*`, `run-*`, `capture-*` skill
 - `docs/discovery/index.md`
 - `docs/srs/index.md`
@@ -401,10 +401,10 @@ skill을 새로 추가할 때는 아래 두 파일을 반드시 함께 추가한
 
 | 파일 | 역할 |
 | --- | --- |
-| `.github/skills/<name>/SKILL.md` | Copilot용 skill 본문 |
-| `.claude/commands/<name>.md` | Claude Code용 wrapper (내용: `Follow the instructions in \`.github/skills/<name>/SKILL.md\` exactly.`) |
+| `skills/<name>/SKILL.md` | skill 본문 (subtree로 `.stage-pilot/skills/`에 노출된다) |
+| `source/.claude/commands/<name>.md` | Claude Code용 wrapper (내용: `Follow the instructions in \`.stage-pilot/skills/<name>/SKILL.md\` exactly.`) |
 
-skill을 삭제하거나 이름을 변경할 때도 두 경로를 함께 처리한다.
+wrapper는 설치 시 `source/.claude/commands/`에서 호스트 `.claude/commands/`로 복사된다. skill을 삭제하거나 이름을 변경할 때도 두 경로를 함께 처리한다.
 
 ## 13. 빠른 점검표
 

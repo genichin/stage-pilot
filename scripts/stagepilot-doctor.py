@@ -135,9 +135,9 @@ class Doctor:
         patterns = [
             Path("README.md"),
             Path("source/instruction.md"),
-            Path(".github/instructions"),
-            Path(".github/skills"),
-            Path(".github/templates"),
+            Path("source/.github/instructions"),
+            Path("skills"),
+            Path("templates"),
         ]
         files: list[Path] = []
         for pattern in patterns:
@@ -225,9 +225,9 @@ class Doctor:
         return all((self.workspace_root / path).exists() for path in required_paths)
 
     def check_req_type_contract(self) -> None:
-        skill_path = self.package_root / ".github/skills/draft-req/SKILL.md"
-        template_path = self.package_root / ".github/templates/srs/req-template.md"
-        index_path = self.package_root / ".github/templates/srs/index.md"
+        skill_path = self.package_root / "skills/draft-req/SKILL.md"
+        template_path = self.package_root / "templates/srs/req-template.md"
+        index_path = self.package_root / "templates/srs/index.md"
 
         if not skill_path.exists() or not template_path.exists() or not index_path.exists():
             self.add("ERROR", "missing-req-contract-files", self.package_root, "REQ type contract files are missing.")
@@ -255,8 +255,8 @@ class Doctor:
             )
 
     def check_design_template_contract(self) -> None:
-        skill_path = self.package_root / ".github/skills/draft-batch-design/SKILL.md"
-        template_path = self.package_root / ".github/templates/batches/design.md"
+        skill_path = self.package_root / "skills/draft-batch-design/SKILL.md"
+        template_path = self.package_root / "templates/batches/design.md"
         if not skill_path.exists() or not template_path.exists():
             self.add("ERROR", "missing-design-contract-files", self.package_root, "Batch design contract files are missing.")
             return
@@ -1250,7 +1250,9 @@ def main() -> int:
     args = parser.parse_args()
 
     workspace_root = Path(args.root).resolve()
-    package_root = Path(__file__).resolve().parents[2]
+    # scripts/stagepilot-doctor.py 기준 한 단계 위가 패키지 루트.
+    # (호스트에서는 .stage-pilot subtree 루트, 개발 레포에서는 저장소 루트)
+    package_root = Path(__file__).resolve().parents[1]
     report_path = Path(args.report).resolve() if args.report else None
 
     if not workspace_root.exists():
