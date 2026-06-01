@@ -10,21 +10,21 @@ git remote add stage-pilot https://github.com/genichin/stage-pilot.git
 git fetch stage-pilot main
 git subtree add --prefix=.stage-pilot stage-pilot main --squash
 # 설치
-bash .stage-pilot/bootstrap/install.sh .
+bash .stage-pilot/tools/install.sh .
 ```
 
 설치 직후에는 Copilot Chat에서 `/bootstrap-baseline`을 먼저 실행해 `docs/project-structure.md`, `docs/runtime-flows.md`, `docs/interface-contract.md`, `docs/data-model.md`, 각 active index를 초기화한다. 이 단계는 Discovery/REQ/Batch/Release 중 어느 것도 아니며, 첫 real Discovery 전에 수행하는 bootstrap 단계다.
 
-greenfield 저장소처럼 읽을 코드나 설정이 없으면 `bootstrap-baseline`은 사용자에게 최소 질문 세트와 필요한 선택 follow-up(`interface-contracts`, `interface-inputs`, `interface-outputs`, `interface-errors`, `core-entities`, `persistence-backend`, `compatibility-rules`)를 묻고, 답변을 `.stagepilot/bootstrap/baseline.yaml`에 저장한 뒤 baseline 문서를 렌더링한다.
+greenfield 저장소처럼 읽을 코드나 설정이 없으면 `bootstrap-baseline`은 사용자에게 최소 질문 세트와 필요한 선택 follow-up(`interface-contracts`, `interface-inputs`, `interface-outputs`, `interface-errors`, `core-entities`, `persistence-backend`, `compatibility-rules`)를 묻고, 답변을 `.stage-pilot/bootstrap/baseline.yaml`에 저장한 뒤 baseline 문서를 렌더링한다.
 
 seed 파일만 먼저 만들고 싶으면 helper를 사용할 수 있다.
 
 ```bash
 # vendor wrapper 사용
-bash .stage-pilot/bootstrap/stagepilot.sh bootstrap-seed .
+bash .stage-pilot/tools/stagepilot.sh bootstrap-seed .
 
 # 설치된 script 직접 사용
-python3 .stage-pilot/scripts/stagepilot-bootstrap-seed.py .
+python3 .stage-pilot/tools/stagepilot-bootstrap-seed.py .
 ```
 
 bootstrap-baseline 실행 결과 예시는 `examples/bootstrap-baseline/`에 포함돼 있다.
@@ -33,32 +33,32 @@ bootstrap-baseline 실행 결과 예시는 `examples/bootstrap-baseline/`에 포
 
 ```bash
 # 원격이 등록된 경우(stage-pilot remote 우선 사용)
-bash .stage-pilot/bootstrap/update.sh .
+bash .stage-pilot/tools/update.sh .
 
 # 충돌 파일을 보존하고 싶을 때(덮어쓰기 비활성화)
-bash .stage-pilot/bootstrap/update.sh --no-overwrite .
+bash .stage-pilot/tools/update.sh --no-overwrite .
 
 # 원격 없이 URL로 직접 업데이트
-bash .stage-pilot/bootstrap/update.sh --repo-url https://github.com/genichin/stage-pilot.git .
+bash .stage-pilot/tools/update.sh --repo-url https://github.com/genichin/stage-pilot.git .
 
 # 설치 재적용 없이 subtree만 갱신
-bash .stage-pilot/bootstrap/update.sh --skip-install .
+bash .stage-pilot/tools/update.sh --skip-install .
 ```
 
 ## 검증
 
 ```bash
 # .stage-pilot subtree에서 doctor 실행
-bash .stage-pilot/bootstrap/stagepilot.sh doctor .
+bash .stage-pilot/tools/stagepilot.sh doctor .
 
 # subtree의 scripts를 직접 실행
-python3 .stage-pilot/scripts/stagepilot-doctor.py .
+python3 .stage-pilot/tools/stagepilot-doctor.py .
 
 # active docs가 반드시 있어야 하는 workspace라면 엄격 모드 사용
-python3 .stage-pilot/scripts/stagepilot-doctor.py --strict-missing-docs .
+python3 .stage-pilot/tools/stagepilot-doctor.py --strict-missing-docs .
 
 # Markdown 리포트를 파일로 저장
-python3 .stage-pilot/scripts/stagepilot-doctor.py --report artifacts/stagepilot-doctor.md .
+python3 .stage-pilot/tools/stagepilot-doctor.py --report artifacts/stagepilot-doctor.md .
 ```
 
 `stagepilot-doctor`는 아래 항목을 검사한다.
@@ -184,7 +184,7 @@ Discovery는 구현 완료 상태를 표현하는 단위가 아니다. Discovery
 새 저장소에 StagePilot을 처음 적용할 때는 Discovery를 만들기 전에 `bootstrap-baseline`을 먼저 실행한다.
 
 1. `bootstrap-baseline`
-	필요하면 최소 질문 세트(`project-summary`, `primary-domain`, `tech-stack`, `primary-runtime`, `primary-entrypoints`)와 선택 follow-up(`interface-contracts`, `core-entities`)를 묻고, 답을 `.stagepilot/bootstrap/baseline.yaml`에 저장한 뒤 `docs/project-structure.md`, `docs/runtime-flows.md`, `docs/interface-contract.md`, `docs/data-model.md`, `docs/discovery/index.md`, `docs/srs/index.md`, `docs/batches/index.md`, `docs/releases/index.md`를 렌더링한다.
+	필요하면 최소 질문 세트(`project-summary`, `primary-domain`, `tech-stack`, `primary-runtime`, `primary-entrypoints`)와 선택 follow-up(`interface-contracts`, `core-entities`)를 묻고, 답을 `.stage-pilot/bootstrap/baseline.yaml`에 저장한 뒤 `docs/project-structure.md`, `docs/runtime-flows.md`, `docs/interface-contract.md`, `docs/data-model.md`, `docs/discovery/index.md`, `docs/srs/index.md`, `docs/batches/index.md`, `docs/releases/index.md`를 렌더링한다.
 	이 단계는 bootstrap 단계이며, Discovery/REQ/Batch/Release 단위로 계산하지 않는다.
 	샘플 결과는 `examples/bootstrap-baseline/bootstrap-baseline-output.md`를 참고한다.
 2. `new-discovery`
@@ -192,9 +192,9 @@ Discovery는 구현 완료 상태를 표현하는 단위가 아니다. Discovery
 
 이미 코드와 실행 경로가 있는 기존 저장소에 StagePilot을 처음 적용할 때도 시작점은 동일하게 `bootstrap-baseline`이다. 차이는 bootstrap이 질문만으로 baseline을 만들지 않고, 현재 저장소 구조와 실행 흔적을 먼저 읽어 `observed` 또는 `mixed` baseline을 만든다는 점이다.
 
-1. 설치 직후 `python3 .stage-pilot/scripts/stagepilot-doctor.py .` 또는 `bash .stage-pilot/bootstrap/stagepilot.sh doctor .`로 누락된 bootstrap 파일과 active docs 상태를 확인한다.
+1. 설치 직후 `python3 .stage-pilot/tools/stagepilot-doctor.py .` 또는 `bash .stage-pilot/tools/stagepilot.sh doctor .`로 누락된 bootstrap 파일과 active docs 상태를 확인한다.
 2. active SDLC 문서가 아직 없다면 `/bootstrap-baseline`을 실행해 기존 저장소 기준의 `docs/project-structure.md`, `docs/runtime-flows.md`, `docs/interface-contract.md`, `docs/data-model.md`, active index를 만든다.
-3. 저장소만으로 프로젝트 정체성이나 계획 runtime을 충분히 설명할 수 없으면 `python3 .stage-pilot/scripts/stagepilot-bootstrap-seed.py .` 또는 `bash .stage-pilot/bootstrap/stagepilot.sh bootstrap-seed .`로 `.stagepilot/bootstrap/baseline.yaml`을 먼저 만들고, 그 다음 `/bootstrap-baseline`을 실행해 baseline을 `mixed`로 보강한다.
+3. 저장소만으로 프로젝트 정체성이나 계획 runtime을 충분히 설명할 수 없으면 `python3 .stage-pilot/tools/stagepilot-bootstrap-seed.py .` 또는 `bash .stage-pilot/tools/stagepilot.sh bootstrap-seed .`로 `.stage-pilot/bootstrap/baseline.yaml`을 먼저 만들고, 그 다음 `/bootstrap-baseline`을 실행해 baseline을 `mixed`로 보강한다.
 4. bootstrap이 끝난 뒤 첫 real Discovery는 baseline 생성 자체가 아니라 현재 진행하려는 기능 변경, 운영 이슈, 기술 결정 중 하나를 주제로 `new-discovery`에서 시작한다.
 5. 이미 `docs/discovery/`, `docs/srs/`, `docs/batches/`, `docs/releases/` 아래 active unit가 운영 중인 저장소라면 bootstrap을 광범위하게 다시 수행하지 말고 `run-sdlc <ID>` 또는 해당 active unit의 skill로 이어서 처리한다. 이 경우 `bootstrap-baseline`은 단순 누락 복구에만 사용한다.
 

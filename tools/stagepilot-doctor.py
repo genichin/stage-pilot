@@ -219,7 +219,7 @@ class Doctor:
             return False
 
         required_paths = [
-            Path("bootstrap/install.sh"),
+            Path("tools/install.sh"),
             Path("examples/p3-change-management"),
         ]
         return all((self.workspace_root / path).exists() for path in required_paths)
@@ -1250,7 +1250,7 @@ def main() -> int:
     args = parser.parse_args()
 
     workspace_root = Path(args.root).resolve()
-    # scripts/stagepilot-doctor.py 기준 한 단계 위가 패키지 루트.
+    # tools/stagepilot-doctor.py 기준 한 단계 위가 패키지 루트.
     # (호스트에서는 .stage-pilot subtree 루트, 개발 레포에서는 저장소 루트)
     package_root = Path(__file__).resolve().parents[1]
     report_path = Path(args.report).resolve() if args.report else None

@@ -237,7 +237,7 @@ if [ "${DRY_RUN}" -eq 1 ]; then
 fi
 
 # 3) 디렉터리 골격 생성 (docs/discovery|srs|batches|releases 등)
-BOOTSTRAP_SCRIPT="${PACKAGE_ROOT}/bootstrap/bootstrap.sh"
+BOOTSTRAP_SCRIPT="${PACKAGE_ROOT}/tools/bootstrap.sh"
 [ -f "${BOOTSTRAP_SCRIPT}" ] || fail "Bootstrap script not found: ${BOOTSTRAP_SCRIPT}"
 
 /bin/bash "${BOOTSTRAP_SCRIPT}" "${HOST_ROOT}"

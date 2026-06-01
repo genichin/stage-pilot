@@ -18,7 +18,7 @@ This skill initializes the StagePilot baseline outside the normal Discovery -> R
 
 `docs/project-structure.md`, `docs/runtime-flows.md`, `docs/interface-contract.md`, `docs/data-model.md`, 그리고 active index 문서는 첫 real Discovery 전에 준비하는 bootstrap 산출물이다. 이 skill은 baseline과 index를 먼저 만들고, 첫 Discovery가 실제 제품/서비스 변경 주제로 시작되도록 만든다.
 
-greenfield 저장소처럼 읽을 코드나 설정이 아직 없으면, 이 skill은 사용자에게 최소 질문 세트를 묻고 `.stagepilot/bootstrap/baseline.yaml` seed를 만든 뒤 baseline 문서를 렌더링한다.
+greenfield 저장소처럼 읽을 코드나 설정이 아직 없으면, 이 skill은 사용자에게 최소 질문 세트를 묻고 `.stage-pilot/bootstrap/baseline.yaml` seed를 만든 뒤 baseline 문서를 렌더링한다.
 
 # When to use
 
@@ -40,7 +40,7 @@ greenfield 저장소처럼 읽을 코드나 설정이 아직 없으면, 이 skil
 
 - 현재 저장소 루트와 디렉터리 구조
 - `docs/discovery/`, `docs/srs/`, `docs/batches/`, `docs/releases/` 존재 여부
-- `.stagepilot/bootstrap/baseline.yaml` 존재 여부
+- `.stage-pilot/bootstrap/baseline.yaml` 존재 여부
 - `docs/project-structure.md`, `docs/runtime-flows.md`, `docs/interface-contract.md`, `docs/data-model.md` 존재 여부
 - 템플릿의 논리 경로
 	- `stage-pilot/templates/bootstrap/baseline-seed.yaml`
@@ -63,7 +63,7 @@ greenfield 저장소처럼 읽을 코드나 설정이 아직 없으면, 이 skil
 - 여러 후보가 동시에 존재하면 가장 우선순위가 높은 한 곳만 사용하고, 서로 다른 설치 위치의 템플릿을 섞지 않는다.
 - 템플릿 source path와 생성 target path를 혼동하지 않는다.
 	- source: `stage-pilot/templates/...`
-	- target: `.stagepilot/bootstrap/baseline.yaml`, `docs/discovery/index.md`, `docs/srs/index.md`, `docs/batches/index.md`, `docs/releases/index.md`, `docs/project-structure.md`, `docs/runtime-flows.md`, `docs/interface-contract.md`, `docs/data-model.md`
+	- target: `.stage-pilot/bootstrap/baseline.yaml`, `docs/discovery/index.md`, `docs/srs/index.md`, `docs/batches/index.md`, `docs/releases/index.md`, `docs/project-structure.md`, `docs/runtime-flows.md`, `docs/interface-contract.md`, `docs/data-model.md`
 
 # Core Rules
 
@@ -77,7 +77,7 @@ greenfield 저장소처럼 읽을 코드나 설정이 아직 없으면, 이 skil
 ## 1. 생성 대상
 
 - 아래 경로가 없으면 생성한다.
-	- `.stagepilot/bootstrap/baseline.yaml`
+	- `.stage-pilot/bootstrap/baseline.yaml`
 	- `docs/discovery/index.md`
 	- `docs/srs/index.md`
 	- `docs/batches/index.md`
@@ -141,7 +141,7 @@ greenfield 저장소처럼 읽을 코드나 설정이 아직 없으면, 이 skil
 
 ## 1.6 seed 파일 source-of-truth 규칙
 
-- bootstrap 질문 결과와 저장소 관찰 결과의 합성 source of truth는 `.stagepilot/bootstrap/baseline.yaml`이다.
+- bootstrap 질문 결과와 저장소 관찰 결과의 합성 source of truth는 `.stage-pilot/bootstrap/baseline.yaml`이다.
 - seed 파일은 active SDLC unit가 아니라 bootstrap 선언 파일이다.
 - seed 파일이 있으면 baseline 문서 생성과 갱신 시 이를 우선 읽는다.
 - seed 파일이 없고 저장소 증거가 충분하지 않으면 질문 없이 baseline 문서를 추정 생성하지 않는다.
@@ -174,9 +174,9 @@ greenfield 저장소처럼 읽을 코드나 설정이 아직 없으면, 이 skil
 # Execution Procedure
 
 1. 저장소에서 active docs 루트와 baseline 파일 존재 여부를 확인한다.
-2. `.stagepilot/bootstrap/baseline.yaml`이 없거나 핵심 필드가 비어 있으면 저장소 관찰로 채울 수 있는 값과 질문이 필요한 값을 분리한다.
+2. `.stage-pilot/bootstrap/baseline.yaml`이 없거나 핵심 필드가 비어 있으면 저장소 관찰로 채울 수 있는 값과 질문이 필요한 값을 분리한다.
 3. 저장소 관찰만으로 부족하면 최소 질문 세트를 사용해 사용자 선언 입력을 수집한다.
-4. `stage-pilot/templates/bootstrap/baseline-seed.yaml`에 해당하는 실제 template source를 해석한 뒤 `.stagepilot/bootstrap/baseline.yaml`을 생성 또는 보강한다.
+4. `stage-pilot/templates/bootstrap/baseline-seed.yaml`에 해당하는 실제 template source를 해석한 뒤 `.stage-pilot/bootstrap/baseline.yaml`을 생성 또는 보강한다.
 5. 누락된 디렉터리가 있으면 `docs/discovery`, `docs/srs`, `docs/batches`, `docs/releases`를 먼저 준비한다.
 6. 필요한 논리 템플릿 경로를 현재 환경의 물리 경로로 해석한 뒤, 누락된 index 파일을 각 템플릿으로 생성한다.
 7. seed 파일과 저장소 상태를 반영해 `docs/project-structure.md`, `docs/runtime-flows.md`, `docs/interface-contract.md`, `docs/data-model.md`를 생성 또는 보강한다.
@@ -194,7 +194,7 @@ greenfield 저장소처럼 읽을 코드나 설정이 아직 없으면, 이 skil
 # Validation
 
 - 생성한 파일 경로가 active docs 구조와 일치하는지 확인한다.
-- `.stagepilot/bootstrap/baseline.yaml`의 필수 필드가 비어 있지 않은지 확인한다.
+- `.stage-pilot/bootstrap/baseline.yaml`의 필수 필드가 비어 있지 않은지 확인한다.
 - baseline 문서와 index에 남아 있는 플레이스홀더가 정말 사람 결정이 필요한 값인지 점검한다.
 - baseline 문서의 `Project Summary`, `Primary Domain`, `Tech Stack`, `Primary Runtime`와 공통 계약 정보가 seed 및 저장소 관찰과 모순되지 않는지 확인한다.
 - Discovery 문서를 생성하지 않았는지 확인한다.

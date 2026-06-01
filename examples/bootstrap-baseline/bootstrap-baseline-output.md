@@ -16,7 +16,7 @@
   - `persistence-backend` -> `PostgreSQL`
   - `compatibility-rules` -> `HTTP market data API :: response payload changes should remain backward compatible within the same API version`, `Refresh job command :: command arguments and exit-code semantics should remain stable for automation callers`
 - Created Files:
-  - `.stagepilot/bootstrap/baseline.yaml`
+  - `.stage-pilot/bootstrap/baseline.yaml`
   - `docs/discovery/index.md`
   - `docs/srs/index.md`
   - `docs/batches/index.md`
@@ -26,7 +26,7 @@
   - `docs/interface-contract.md`
   - `docs/data-model.md`
 - Seed Status:
-  - `.stagepilot/bootstrap/baseline.yaml`: created
+  - `.stage-pilot/bootstrap/baseline.yaml`: created
 - Baseline Status:
   - `docs/project-structure.md`: created
   - `docs/runtime-flows.md`: created
@@ -38,7 +38,7 @@
   - `docs/batches/index.md`: created
   - `docs/releases/index.md`: created
 - Notes:
-  - baseline docs were rendered from `.stagepilot/bootstrap/baseline.yaml`
+  - baseline docs were rendered from `.stage-pilot/bootstrap/baseline.yaml`
   - no Discovery document was created
   - no REQ, Batch, or Release unit was opened
 - Next Action:

@@ -1,7 +1,7 @@
 # Sample Host Project Data Model
 
 - Baseline Mode: declared
-- Baseline Seed: .stagepilot/bootstrap/baseline.yaml
+- Baseline Seed: .stage-pilot/bootstrap/baseline.yaml
 - Status: confirmed
 - Owner: Platform Team
 - Last Updated (KST): 2026-04-30 16:30

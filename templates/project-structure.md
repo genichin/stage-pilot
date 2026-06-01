@@ -1,7 +1,7 @@
 # {{PROJECT_NAME}} Project Structure
 
 - Baseline Mode: {{BASELINE_MODE:declared|observed|mixed}}
-- Baseline Seed: {{BASELINE_SEED_PATH:.stagepilot/bootstrap/baseline.yaml}}
+- Baseline Seed: {{BASELINE_SEED_PATH:.stage-pilot/bootstrap/baseline.yaml}}
 - Status: draft | confirmed
 - Owner: {{OWNER_OR_TEAM}}
 - Last Updated (KST): {{UPDATED_AT_KST}}

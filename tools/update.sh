@@ -141,7 +141,7 @@ if [ "${SKIP_INSTALL}" -eq 1 ]; then
   exit 0
 fi
 
-INSTALL_SCRIPT="${HOST_ROOT}/${PREFIX}/bootstrap/install.sh"
+INSTALL_SCRIPT="${HOST_ROOT}/${PREFIX}/tools/install.sh"
 [ -f "${INSTALL_SCRIPT}" ] || fail "Install script not found after update: ${INSTALL_SCRIPT}"
 
 if [ "${DRY_RUN}" -eq 1 ]; then

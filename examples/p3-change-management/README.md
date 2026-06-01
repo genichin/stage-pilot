@@ -28,5 +28,5 @@
 이 예시 루트는 doctor로 독립 검증할 수 있다.
 
 ```bash
-python3 .stage-pilot/scripts/stagepilot-doctor.py examples/p3-change-management
+python3 .stage-pilot/tools/stagepilot-doctor.py examples/p3-change-management
 ```

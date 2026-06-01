@@ -1,7 +1,7 @@
 # Sample Host Project Structure
 
 - Baseline Mode: declared
-- Baseline Seed: .stagepilot/bootstrap/baseline.yaml
+- Baseline Seed: .stage-pilot/bootstrap/baseline.yaml
 - Status: confirmed
 - Owner: Platform Team
 - Last Updated (KST): 2026-04-30 16:30
@@ -37,7 +37,7 @@
 ```text
 .
 ├── .github/
-├── .stagepilot/
+├── .stage-pilot/
 ├── docs/
 ├── src/
 ├── scripts/
@@ -49,7 +49,7 @@
 
 - `.github/`
 	- StagePilot skills, templates, and host instructions installed into the repository.
-- `.stagepilot/`
+- `.stage-pilot/`
 	- bootstrap declaration seed used to render the baseline documents.
 - `docs/`
 	- Active SDLC docs, index files, and cross-cutting baseline references.
@@ -64,13 +64,13 @@
 
 - Delivery documents under `docs/` must not be treated as implementation modules.
 - `src/` can evolve independently, but structure changes should update this baseline.
-- `.stagepilot/bootstrap/baseline.yaml` should be updated when the declared project identity changes before code exists.
+- `.stage-pilot/bootstrap/baseline.yaml` should be updated when the declared project identity changes before code exists.
 - Tooling automation under `.stage-pilot/` must not overwrite host source code.
 
 ## Shared Boundaries
 
 - `.stage-pilot/` provides SDLC workflow assets.
-- `.stagepilot/` stores bootstrap declarations outside active SDLC units.
+- `.stage-pilot/` stores bootstrap declarations outside active SDLC units.
 - `docs/` is the source of truth for active SDLC state.
 - `src/`, `scripts/`, and `tests/` remain host-project owned implementation surfaces.
 
@@ -88,4 +88,4 @@
 
 ## Change Log
 
-- 2026-04-30: bootstrap-baseline created the initial repository structure baseline from `.stagepilot/bootstrap/baseline.yaml`.
+- 2026-04-30: bootstrap-baseline created the initial repository structure baseline from `.stage-pilot/bootstrap/baseline.yaml`.

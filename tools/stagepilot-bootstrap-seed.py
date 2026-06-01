@@ -804,10 +804,10 @@ def render_seed(answers: SeedAnswers) -> str:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Create .stagepilot/bootstrap/baseline.yaml from StagePilot bootstrap answers.",
+        description="Create .stage-pilot/bootstrap/baseline.yaml from StagePilot bootstrap answers.",
     )
     parser.add_argument("host_root", nargs="?", default=".", help="Host repository root. Defaults to the current directory.")
-    parser.add_argument("--output", help="Explicit output path. Defaults to HOST_ROOT/.stagepilot/bootstrap/baseline.yaml.")
+    parser.add_argument("--output", help="Explicit output path. Defaults to HOST_ROOT/.stage-pilot/bootstrap/baseline.yaml.")
     parser.add_argument("--force", action="store_true", help="Overwrite an existing seed file.")
     parser.add_argument("--dry-run", action="store_true", help="Print the generated seed to stdout without writing a file.")
     parser.add_argument("--non-interactive", action="store_true", help="Require explicit CLI answers instead of interactive prompts.")
@@ -884,7 +884,7 @@ def main() -> int:
     if not host_root.exists() or not host_root.is_dir():
         return fail(f"host root not found: {host_root}")
 
-    output_path = Path(args.output).resolve() if args.output else host_root / ".stagepilot/bootstrap/baseline.yaml"
+    output_path = Path(args.output).resolve() if args.output else host_root / ".stage-pilot/bootstrap/baseline.yaml"
 
     try:
         answers = collect_answers(args, host_root)

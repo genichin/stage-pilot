@@ -1,7 +1,7 @@
 # Sample Host Project Runtime Flows
 
 - Baseline Mode: declared
-- Baseline Seed: .stagepilot/bootstrap/baseline.yaml
+- Baseline Seed: .stage-pilot/bootstrap/baseline.yaml
 - Status: confirmed
 - Owner: Platform Team
 - Last Updated (KST): 2026-04-30 16:30
@@ -27,7 +27,7 @@
 
 ## Shared Components
 
-- .stagepilot/bootstrap/baseline.yaml
+- .stage-pilot/bootstrap/baseline.yaml
 - `.stage-pilot/skills/`
 - `docs/project-structure.md`
 - `docs/*/index.md`
@@ -35,7 +35,7 @@
 ## Flow: `bootstrap baseline initialization`
 
 1. StagePilot assets are installed into the host repository.
-2. `/bootstrap-baseline` collects the minimum declaration set and writes `.stagepilot/bootstrap/baseline.yaml`.
+2. `/bootstrap-baseline` collects the minimum declaration set and writes `.stage-pilot/bootstrap/baseline.yaml`.
 3. baseline docs and active index skeletons are rendered from that seed.
 4. The repository becomes ready for the first real Discovery.
 
@@ -48,7 +48,7 @@
 ## Flow Constraints
 
 - Fresh host repositories should complete baseline initialization before the first real Discovery.
-- Declared runtime assumptions must stay in sync with `.stagepilot/bootstrap/baseline.yaml` until observed implementation evidence exists.
+- Declared runtime assumptions must stay in sync with `.stage-pilot/bootstrap/baseline.yaml` until observed implementation evidence exists.
 - Structure or orchestration changes must update this document or `docs/project-structure.md`.
 
 ## Current Gaps / Planned Changes
@@ -65,4 +65,4 @@
 
 ## Change Log
 
-- 2026-04-30: bootstrap-baseline created the initial runtime flow baseline from `.stagepilot/bootstrap/baseline.yaml`.
+- 2026-04-30: bootstrap-baseline created the initial runtime flow baseline from `.stage-pilot/bootstrap/baseline.yaml`.

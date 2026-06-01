@@ -66,7 +66,7 @@
 
 처리 원칙:
 
-- `bootstrap-baseline`은 먼저 `.stagepilot/bootstrap/baseline.yaml` seed를 만들거나 보강한다.
+- `bootstrap-baseline`은 먼저 `.stage-pilot/bootstrap/baseline.yaml` seed를 만들거나 보강한다.
 - greenfield 저장소처럼 관찰 가능한 정보가 부족하면 최소 질문 세트로 seed를 채운다.
 - `bootstrap-baseline`은 baseline 문서와 index를 초기화하지만 Discovery 문서를 만들지 않는다.
 - baseline 문서는 seed를 source of truth로 렌더링하고, 필요하면 저장소 관찰값으로 보강한다.

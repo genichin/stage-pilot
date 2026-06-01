@@ -8,7 +8,7 @@ Usage: stagepilot.sh <command> [args]
 
 Commands:
   bootstrap-seed [HOST_ROOT] [options]
-      Create .stagepilot/bootstrap/baseline.yaml from interactive answers
+      Create .stage-pilot/bootstrap/baseline.yaml from interactive answers
       or explicit CLI arguments.
   doctor [HOST_ROOT] [--strict-missing-docs] [--report <path>]
       Run the StagePilot validation script against a workspace.
@@ -24,7 +24,7 @@ run_doctor() {
   local script_dir package_root doctor_script
   script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
   package_root="$(cd "${script_dir}/.." && pwd -P)"
-  doctor_script="${package_root}/scripts/stagepilot-doctor.py"
+  doctor_script="${package_root}/tools/stagepilot-doctor.py"
 
   [ -f "${doctor_script}" ] || fail "Doctor script not found: ${doctor_script}"
   command -v python3 >/dev/null 2>&1 || fail "python3 is required to run doctor"
@@ -36,7 +36,7 @@ run_bootstrap_seed() {
   local script_dir package_root seed_script
   script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
   package_root="$(cd "${script_dir}/.." && pwd -P)"
-  seed_script="${package_root}/scripts/stagepilot-bootstrap-seed.py"
+  seed_script="${package_root}/tools/stagepilot-bootstrap-seed.py"
 
   [ -f "${seed_script}" ] || fail "Bootstrap seed helper not found: ${seed_script}"
   command -v python3 >/dev/null 2>&1 || fail "python3 is required to generate a bootstrap seed"
