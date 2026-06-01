@@ -6,19 +6,23 @@ usage() {
   cat <<'EOF'
 Usage: install.sh [--dry-run] [HOST_ROOT] [POLICY]
 
+source/ 아래의 모든 파일을 호스트 저장소 루트로 복사한다.
+  source/.github/...  -> HOST_ROOT/.github/...
+  source/.claude/...  -> HOST_ROOT/.claude/...
+
+단, source/instruction.md는 도구 중립 단일 원본으로 다음 두 복사본으로 fan-out 한다.
+  -> HOST_ROOT/.github/copilot-instructions.md  (Copilot용, verbatim 복사)
+  -> HOST_ROOT/CLAUDE.md 의 StagePilot 마커 블록  (Claude용)
+(instruction.md 자체는 루트로 그대로 복사하지 않는다.)
+
 Options:
-  --dry-run   Show planned changes without modifying files.
-  --source-path <path>
-              Source path for StagePilot assets: root/.github|base/.github
-              (default: root/.github)
-  --cleanup-legacy-base
-              Remove legacy base/.github directory under host root.
-  -h, --help  Show this help message.
+  --dry-run   변경 없이 복사/생성 계획만 출력한다.
+  -h, --help  도움말을 출력한다.
 
 Arguments:
-  HOST_ROOT   Target host repository root (default: current directory)
-  POLICY      Conflict policy for non-copilot files: replace|preserve|fail
-              (default: STAGEPILOT_CONFLICT_POLICY or preserve)
+  HOST_ROOT   대상 호스트 저장소 루트 (default: 현재 디렉터리)
+  POLICY      기존 파일 충돌 정책: replace|preserve|fail
+              (default: STAGEPILOT_CONFLICT_POLICY 또는 preserve)
 EOF
 }
 
@@ -31,25 +35,18 @@ fail() {
   exit 1
 }
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PACKAGE_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+# pwd -P로 물리 경로를 잡아 심링크(.stage-pilot/* 등)를 실제 위치로 해석한다.
+# 그렇지 않으면 SOURCE_DIR가 심링크가 되어 `find`가 내려가지 못한다.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+PACKAGE_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd -P)"
+SOURCE_DIR="${PACKAGE_ROOT}/source"
 
 DRY_RUN=0
-SOURCE_PATH="root/.github"
-CLEANUP_LEGACY_BASE=0
 ARGS=()
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --dry-run)
       DRY_RUN=1
-      ;;
-    --source-path)
-      [ "$#" -ge 2 ] || fail "--source-path requires a value"
-      SOURCE_PATH="$2"
-      shift
-      ;;
-    --cleanup-legacy-base)
-      CLEANUP_LEGACY_BASE=1
       ;;
     -h|--help)
       usage
@@ -67,24 +64,10 @@ done
 
 HOST_ROOT="${ARGS[0]:-$(pwd)}"
 POLICY="${ARGS[1]:-${STAGEPILOT_CONFLICT_POLICY:-preserve}}"
-TARGET_GITHUB="${HOST_ROOT}/.github"
 TARGET_CLAUDE="${HOST_ROOT}/CLAUDE.md"
+INSTRUCTION_SOURCE="${SOURCE_DIR}/instruction.md"
 STAGEPILOT_BEGIN="<!-- STAGEPILOT:BEGIN -->"
 STAGEPILOT_END="<!-- STAGEPILOT:END -->"
-
-case "${SOURCE_PATH}" in
-  root/.github)
-    SOURCE_GITHUB="${PACKAGE_ROOT}/.github"
-    ;;
-  base/.github)
-    SOURCE_GITHUB="${PACKAGE_ROOT}/base/.github"
-    ;;
-  *)
-    fail "Invalid source path '${SOURCE_PATH}'. Allowed: root/.github|base/.github"
-    ;;
-esac
-
-ALLOWLIST_FILE="${PACKAGE_ROOT}/bootstrap/source-allowlist.txt"
 
 case "${POLICY}" in
   replace|preserve|fail)
@@ -94,275 +77,152 @@ case "${POLICY}" in
     ;;
 esac
 
-[ -d "${SOURCE_GITHUB}" ] || fail "Source package not found: ${SOURCE_GITHUB}"
+[ -d "${SOURCE_DIR}" ] || fail "Source directory not found: ${SOURCE_DIR}"
 [ -d "${HOST_ROOT}" ] || fail "Host root not found: ${HOST_ROOT}"
-[ -f "${ALLOWLIST_FILE}" ] || fail "Allowlist not found: ${ALLOWLIST_FILE}"
-
-is_allowed_relpath() {
-  local rel_path="$1"
-  while IFS= read -r raw_line; do
-    line="${raw_line%%#*}"
-    line="${line%$'\r'}"
-    line="$(printf '%s' "${line}" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"
-    [ -n "${line}" ] || continue
-
-    if [[ "${line}" == */ ]]; then
-      [[ "${rel_path}" == "${line}"* ]] && return 0
-    else
-      [[ "${rel_path}" == "${line}" ]] && return 0
-    fi
-  done < "${ALLOWLIST_FILE}"
-
-  return 1
-}
-
-merge_stagepilot_section() {
-  local src_file="$1"
-  local dst_file="$2"
-  local payload_file
-  local output_file
-
-  payload_file="$(mktemp)"
-  output_file="$(mktemp)"
-
-  # If source already has marker block, use only that block as payload.
-  if grep -Fq "${STAGEPILOT_BEGIN}" "${src_file}" && grep -Fq "${STAGEPILOT_END}" "${src_file}"; then
-    awk -v begin="${STAGEPILOT_BEGIN}" -v end="${STAGEPILOT_END}" '
-      $0 == begin { in_block=1; next }
-      $0 == end { in_block=0; exit }
-      in_block { print }
-    ' "${src_file}" > "${payload_file}"
-  else
-    cat "${src_file}" > "${payload_file}"
-  fi
-
-  if grep -Fq "${STAGEPILOT_BEGIN}" "${dst_file}" && grep -Fq "${STAGEPILOT_END}" "${dst_file}"; then
-    awk -v begin="${STAGEPILOT_BEGIN}" -v end="${STAGEPILOT_END}" -v payload="${payload_file}" '
-      $0 == begin {
-        print
-        while ((getline line < payload) > 0) {
-          print line
-        }
-        in_block=1
-        next
-      }
-      $0 == end {
-        in_block=0
-        print
-        next
-      }
-      !in_block { print }
-    ' "${dst_file}" > "${output_file}"
-  else
-    cat "${dst_file}" > "${output_file}"
-    {
-      printf '\n'
-      printf '## StagePilot\n'
-      printf '%s\n' "${STAGEPILOT_BEGIN}"
-      cat "${payload_file}"
-      printf '%s\n' "${STAGEPILOT_END}"
-    } >> "${output_file}"
-  fi
-
-  if [ "${DRY_RUN}" -eq 1 ]; then
-    log "[dry-run] merge preview: ${dst_file}"
-    if command -v diff >/dev/null 2>&1; then
-      diff -u "${dst_file}" "${output_file}" || true
-    else
-      log "[dry-run] diff command not available; preview skipped for ${dst_file}"
-    fi
-  else
-    cp -a "${output_file}" "${dst_file}"
-  fi
-
-  rm -f "${payload_file}" "${output_file}"
-}
-
-install_claude_section() {
-  local src_copilot="${SOURCE_GITHUB}/copilot-instructions.md"
-  [ -f "${src_copilot}" ] || { log "copilot-instructions.md not found; skipping CLAUDE.md"; return 0; }
-
-  if [ ! -e "${TARGET_CLAUDE}" ]; then
-    local payload_file
-    payload_file="$(mktemp)"
-    if grep -Fq "${STAGEPILOT_BEGIN}" "${src_copilot}" && grep -Fq "${STAGEPILOT_END}" "${src_copilot}"; then
-      awk -v begin="${STAGEPILOT_BEGIN}" -v end="${STAGEPILOT_END}" '
-        $0 == begin { in_block=1; next }
-        $0 == end { in_block=0; exit }
-        in_block { print }
-      ' "${src_copilot}" > "${payload_file}"
-    else
-      cat "${src_copilot}" > "${payload_file}"
-    fi
-    if [ "${DRY_RUN}" -eq 1 ]; then
-      log "[dry-run] create: CLAUDE.md"
-    else
-      {
-        printf '%s\n' "${STAGEPILOT_BEGIN}"
-        cat "${payload_file}"
-        printf '%s\n' "${STAGEPILOT_END}"
-      } > "${TARGET_CLAUDE}"
-    fi
-    rm -f "${payload_file}"
-  else
-    merge_stagepilot_section "${src_copilot}" "${TARGET_CLAUDE}"
-  fi
-}
-
-# NOTE: skill을 추가/삭제/이름변경할 때는 .github/skills/<name>/SKILL.md와
-# .claude/commands/<name>.md를 반드시 함께 처리한다. (README 12.1 참고)
-install_claude_commands() {
-  local source_commands="${PACKAGE_ROOT}/.claude/commands"
-  local target_commands="${HOST_ROOT}/.claude/commands"
-
-  [ -d "${source_commands}" ] || { log "no .claude/commands source; skipping"; return 0; }
-
-  while IFS= read -r -d '' src_file; do
-    local cmd_name
-    cmd_name="$(basename "${src_file}")"
-    local dst_file="${target_commands}/${cmd_name}"
-
-    if [ ! -e "${dst_file}" ]; then
-      if [ "${DRY_RUN}" -eq 1 ]; then
-        log "[dry-run] create: .claude/commands/${cmd_name}"
-      else
-        mkdir -p "${target_commands}"
-        cp -a "${src_file}" "${dst_file}"
-      fi
-      claude_installed=$((claude_installed + 1))
-      continue
-    fi
-
-    if cmp -s "${src_file}" "${dst_file}"; then
-      claude_skipped=$((claude_skipped + 1))
-      continue
-    fi
-
-    case "${POLICY}" in
-      replace)
-        if [ "${DRY_RUN}" -eq 1 ]; then
-          log "[dry-run] replace: .claude/commands/${cmd_name}"
-        else
-          cp -a "${src_file}" "${dst_file}"
-        fi
-        claude_installed=$((claude_installed + 1))
-        ;;
-      preserve)
-        claude_skipped=$((claude_skipped + 1))
-        ;;
-      fail)
-        printf '[install] CONFLICT: .claude/commands/%s\n' "${cmd_name}" >&2
-        failed=$((failed + 1))
-        ;;
-    esac
-  done < <(find "${source_commands}" -maxdepth 1 -name "*.md" -print0 | sort -z)
-
-  log "claude_commands: installed=${claude_installed} skipped=${claude_skipped}"
-}
 
 copied=0
 skipped=0
 conflicted=0
 failed=0
-merged=0
-claude_installed=0
-claude_skipped=0
 
-mkdir -p "${TARGET_GITHUB}"
-
-while IFS= read -r -d '' src_file; do
-  rel_path="${src_file#${SOURCE_GITHUB}/}"
-
-  if ! is_allowed_relpath "${rel_path}"; then
-    skipped=$((skipped + 1))
-    continue
-  fi
-
-  dst_file="${TARGET_GITHUB}/${rel_path}"
+# source/<rel> 파일 하나를 HOST_ROOT/<rel>로 정책에 맞춰 복사한다.
+copy_one() {
+  local src_file="$1"
+  local rel_path="$2"
+  local dst_file="${HOST_ROOT}/${rel_path}"
+  local dst_dir
   dst_dir="$(dirname "${dst_file}")"
-
-  mkdir -p "${dst_dir}"
 
   if [ ! -e "${dst_file}" ]; then
     if [ "${DRY_RUN}" -eq 1 ]; then
       log "[dry-run] copy: ${rel_path}"
     else
+      mkdir -p "${dst_dir}"
       cp -a "${src_file}" "${dst_file}"
     fi
     copied=$((copied + 1))
-    continue
+    return
   fi
 
   if cmp -s "${src_file}" "${dst_file}"; then
     skipped=$((skipped + 1))
-    continue
-  fi
-
-  if [ "${rel_path}" = "copilot-instructions.md" ]; then
-    merge_stagepilot_section "${src_file}" "${dst_file}"
-    merged=$((merged + 1))
-    continue
+    return
   fi
 
   conflicted=$((conflicted + 1))
-
   case "${POLICY}" in
     replace)
       if [ "${DRY_RUN}" -eq 1 ]; then
         log "[dry-run] replace: ${rel_path}"
       else
+        mkdir -p "${dst_dir}"
         cp -a "${src_file}" "${dst_file}"
       fi
       copied=$((copied + 1))
       ;;
     preserve)
+      log "preserve existing: ${rel_path}"
       skipped=$((skipped + 1))
       ;;
     fail)
-      printf '[install] CONFLICT: %s\n' "${dst_file}" >&2
-      failed=1
+      printf '[install] CONFLICT: %s\n' "${rel_path}" >&2
+      failed=$((failed + 1))
       ;;
   esac
+}
 
-done < <(find "${SOURCE_GITHUB}" -type f -print0 | sort -z)
-
-if [ "${CLEANUP_LEGACY_BASE}" -eq 1 ]; then
-  LEGACY_BASE_DIR="${HOST_ROOT}/base/.github"
-  if [ -d "${LEGACY_BASE_DIR}" ]; then
-    if [ "${DRY_RUN}" -eq 1 ]; then
-      log "[dry-run] delete legacy path: ${LEGACY_BASE_DIR}"
-    else
-      rm -rf "${LEGACY_BASE_DIR}" || fail "LEGACY_BASE_DELETE_ERROR: failed to remove ${LEGACY_BASE_DIR}"
-      log "deleted legacy path: ${LEGACY_BASE_DIR}"
-    fi
-  else
-    log "legacy path not found, skip cleanup: ${LEGACY_BASE_DIR}"
+# 1) source/ 전체를 호스트 루트로 복사 (.github, .claude 등 구조 보존)
+#    단, instruction.md는 단일 원본이므로 루트로 직접 복사하지 않고 아래에서 fan-out 한다.
+while IFS= read -r -d '' src_file; do
+  rel_path="${src_file#${SOURCE_DIR}/}"
+  if [ "${rel_path}" = "instruction.md" ]; then
+    continue
   fi
+  copy_one "${src_file}" "${rel_path}"
+done < <(find "${SOURCE_DIR}" -type f -print0 | sort -z)
+
+# 1-b) instruction.md -> .github/copilot-instructions.md (Copilot 매직 파일명)로 fan-out
+if [ -f "${INSTRUCTION_SOURCE}" ]; then
+  copy_one "${INSTRUCTION_SOURCE}" ".github/copilot-instructions.md"
 fi
 
-install_claude_section
-install_claude_commands
+# 2) CLAUDE.md: instruction.md를 단일 원본으로 StagePilot 블록 생성/갱신.
+#    호스트가 직접 추가한 CLAUDE.md 내용은 마커 밖에 그대로 보존한다.
+generate_claude_md() {
+  [ -f "${INSTRUCTION_SOURCE}" ] || { log "instruction.md 없음; CLAUDE.md 생략"; return 0; }
+
+  local payload output
+  payload="$(mktemp)"
+  output="$(mktemp)"
+
+  # 원본에 이미 마커가 있으면 그 블록만, 없으면 파일 전체를 payload로 사용한다.
+  if grep -Fq "${STAGEPILOT_BEGIN}" "${INSTRUCTION_SOURCE}" && grep -Fq "${STAGEPILOT_END}" "${INSTRUCTION_SOURCE}"; then
+    awk -v b="${STAGEPILOT_BEGIN}" -v e="${STAGEPILOT_END}" '
+      $0 == b { f=1; next }
+      $0 == e { f=0; exit }
+      f { print }
+    ' "${INSTRUCTION_SOURCE}" > "${payload}"
+  else
+    cat "${INSTRUCTION_SOURCE}" > "${payload}"
+  fi
+
+  if [ ! -e "${TARGET_CLAUDE}" ]; then
+    {
+      printf '%s\n' "${STAGEPILOT_BEGIN}"
+      cat "${payload}"
+      printf '%s\n' "${STAGEPILOT_END}"
+    } > "${output}"
+  elif grep -Fq "${STAGEPILOT_BEGIN}" "${TARGET_CLAUDE}" && grep -Fq "${STAGEPILOT_END}" "${TARGET_CLAUDE}"; then
+    awk -v b="${STAGEPILOT_BEGIN}" -v e="${STAGEPILOT_END}" -v p="${payload}" '
+      $0 == b { print; while ((getline line < p) > 0) print line; f=1; next }
+      $0 == e { f=0; print; next }
+      !f { print }
+    ' "${TARGET_CLAUDE}" > "${output}"
+  else
+    cat "${TARGET_CLAUDE}" > "${output}"
+    {
+      printf '\n## StagePilot\n'
+      printf '%s\n' "${STAGEPILOT_BEGIN}"
+      cat "${payload}"
+      printf '%s\n' "${STAGEPILOT_END}"
+    } >> "${output}"
+  fi
+
+  if [ "${DRY_RUN}" -eq 1 ]; then
+    if command -v diff >/dev/null 2>&1 && [ -e "${TARGET_CLAUDE}" ]; then
+      log "[dry-run] CLAUDE.md diff:"
+      diff -u "${TARGET_CLAUDE}" "${output}" || true
+    else
+      log "[dry-run] create/update: CLAUDE.md"
+    fi
+  else
+    cp -a "${output}" "${TARGET_CLAUDE}"
+    log "CLAUDE.md StagePilot 블록 갱신"
+  fi
+
+  rm -f "${payload}" "${output}"
+}
+
+generate_claude_md
 
 log "host_root=${HOST_ROOT}"
-log "source=${SOURCE_GITHUB}"
-log "source_path=${SOURCE_PATH}"
-log "allowlist=${ALLOWLIST_FILE}"
-log "cleanup_legacy_base=${CLEANUP_LEGACY_BASE}"
+log "source=${SOURCE_DIR}"
 log "policy=${POLICY}"
-log "copied=${copied} skipped=${skipped} conflicted=${conflicted} merged=${merged}"
+log "copied=${copied} skipped=${skipped} conflicted=${conflicted}"
 
 if [ "${failed}" -ne 0 ]; then
   if [ "${DRY_RUN}" -eq 1 ]; then
-    fail "[dry-run] Conflicts would occur with policy=fail."
+    fail "[dry-run] policy=fail에서 충돌이 발생합니다."
   fi
-  fail "Conflicts encountered with policy=fail. No bootstrap run."
+  fail "policy=fail 충돌로 설치를 중단합니다."
 fi
 
 if [ "${DRY_RUN}" -eq 1 ]; then
-  log "[dry-run] Bootstrap step skipped. No files were changed."
+  log "[dry-run] 디렉터리 골격 생성 단계 생략. 변경된 파일 없음."
   exit 0
 fi
 
+# 3) 디렉터리 골격 생성 (docs/discovery|srs|batches|releases 등)
 BOOTSTRAP_SCRIPT="${PACKAGE_ROOT}/bootstrap/bootstrap.sh"
 [ -f "${BOOTSTRAP_SCRIPT}" ] || fail "Bootstrap script not found: ${BOOTSTRAP_SCRIPT}"
 

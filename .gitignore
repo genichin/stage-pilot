@@ -1,2 +1,7 @@
 .vscode/
+.claude/
+.github/
+.stage-pilot/
+.docs/
 temp/
+CLAUDE.md

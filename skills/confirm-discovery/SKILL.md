@@ -67,7 +67,7 @@ This skill revalidates an existing Discovery document against the current reposi
 - 입력이 파일 경로면 해당 경로를 그대로 사용한다.
 - 매칭 결과가 0개면 자동 진행하지 않고 사용자에게 입력을 재확인하도록 알린다.
 - 같은 prefix에 대해 여러 문서가 매칭되면 임의 선택하지 않고 후보 목록을 보여 준 뒤 사용자 확인을 요청한다.
-- `.vendor/` 경로는 탐색 대상에서 제외한다.
+- `.stage-pilot/` 경로는 탐색 대상에서 제외한다.
 
 ## 2. 현재 구현 상태 재확인 규칙
 
@@ -127,11 +127,14 @@ This skill revalidates an existing Discovery document against the current reposi
 
 - `REQ/검토 책임자 지정`, `구현/검토 책임자 지정`, `해소 책임자 지정`처럼 사람 책임 배정이 필요한 항목은 AI가 자동으로 채우지 않는다.
 - 이런 항목이 Discovery의 범위/정책/성공 기준 자체를 결정하는 질문이 아니라 이후 REQ 또는 batch planning 단계의 담당자 할당 문제라면, `# 10. 사용자 결정 필요 항목 요약`에 남겨 Discovery confirm을 가로막는 질문으로 유지하지 말고 `# 8. REQ로 넘기기 전 확인 체크` 또는 `# 11. Discovery Freeze`의 보류 사유로 정리한다.
+- 다만 사람이 이미 대화에서 승인자/책임자/범위 결정을 명시해 주었고, 그 값이 문서에 직접 반영 가능한 형태라면 AI는 그 사람 결정을 문서에 옮길 수 있다. 이 경우에도 AI가 새 값을 추정하면 안 되고, 사용자가 제공한 사람 이름/결정만 그대로 기록해야 한다.
 - 저장소 내부에서 확인 가능한 DATA 항목은 repo-wide consumer 탐색으로 먼저 해소를 시도한다. 예를 들어 특정 명령의 응답 길이에 의존하는 호스트 도구/스크립트 목록이 필요한 경우, 관련 토큰(`VISIONCFG`, `visioncfg` 등)으로 코드/문서/QA 스크립트 전체를 검색해 in-repo 소비처를 먼저 열거한다.
+- 측정 경로와 검증 방법은 저장소 근거로 이미 확정됐지만 실제 수치가 구현/운영 단계에서만 수집 가능한 경우, 그 DATA 항목이 REQ 초안 작성 자체를 막는지 분리해서 판단한다. 대표 검증셋, 범위, 성공 기준, 사람 승인자가 확정돼 있으면 runtime baseline 수치 같은 운영 데이터는 REQ 단계 계측 항목으로 넘기고 confirm을 진행할 수 있다.
 - 이 과정에서 저장소 안에서 길이 의존 구현이 확인되지 않으면 `현 저장소 기준 확인된 소비처는 없음`처럼 범위를 한정해 정리할 수 있다. 단, 저장소 밖 배포 도구나 외부 시스템까지 없다고 확대 해석하지 않는다.
 
 - 승인 판정 직전에는 A와 B만 남아 있어야 한다.
 - B로 분류한 항목을 채운 뒤에도 `# 1`부터 `# 10` 사이에 C 유형 플레이스홀더가 남아 있으면 승인하지 않는다.
+- 단, `DATA_*` 성격의 항목이 "REQ 또는 delivery 단계에서 계측·확정할 운영 데이터"임이 문서 안에 명시되고, Discovery 본문만으로도 FR/NFR, 범위, 성공 기준, 검증 시나리오를 REQ 초안으로 내리기에 충분하다면 confirm 차단 사유로 유지하지 않는다. 이런 경우에는 `# 8. REQ로 넘기기 전 확인 체크`와 `# 10. 사용자 결정 필요 항목 요약`에 "REQ 단계 계측/확정" 또는 동등한 표현으로 넘기고, Discovery Freeze rationale에도 비차단 운영 데이터라는 점을 적는다.
 
 ## 4. 최종 승인 게이트
 
@@ -144,6 +147,7 @@ This skill revalidates an existing Discovery document against the current reposi
 - `# 10. 사용자 결정 필요 항목 요약`에 남은 항목이 모두 `없음`이거나, 문서 안에서 이미 답이 반영되어 제거 가능해야 한다.
 - `# 11. Discovery Freeze`에 `Confirmed By`가 비어 있지 않아야 한다.
 - 현재 저장소 상태가 Discovery의 핵심 범위나 요구사항을 다시 정의해야 할 정도로 모순되지 않아야 한다.
+- runtime budget baseline, 허용 상한, 운영 계측값처럼 구현 전에는 원천적으로 확정되지 않는 수치가 남아 있더라도, 그 값이 REQ의 acceptance/verification에서 수집할 evidence로 이미 위치가 정리돼 있으면 confirm 차단 사유로 과도하게 남기지 않는다.
 
 `Confirmed By` 관련 규칙:
 
@@ -194,7 +198,7 @@ This skill revalidates an existing Discovery document against the current reposi
 3. 아래 항목은 기본적으로 제외한다.
    - 테스트 파일
    - 의존성 잠금 파일
-   - `.vendor/` 하위 파일
+   - `.stage-pilot/` 하위 파일
 4. 탐색 결과를 아래 형태로 정리한다.
    - 관련 파일 경로 목록
    - 이미 구현된 내용

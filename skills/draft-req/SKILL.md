@@ -52,8 +52,7 @@ Reference: template path portability guidance lives in `references/template-path
 - 템플릿은 하나의 물리 경로만 고정하지 말고 `stage-pilot/templates/...`를 논리 경로로 취급한다.
 - 물리 경로는 다음 순서로 해석한다.
 	1. `.stage-pilot/templates/...`
-	2. `.vendor/stage-pilot/templates/...`
-	3. `~/.stage-pilot/templates/...`
+	2. `~/.stage-pilot/templates/...`
 - 여러 후보가 동시에 존재하면 가장 우선순위가 높은 한 곳만 사용하고, 서로 다른 설치 위치의 템플릿을 섞지 않는다.
 - 템플릿 source path와 생성 target path를 혼동하지 않는다.
 	- source: `stage-pilot/templates/...`
@@ -85,13 +84,12 @@ Reference: template path portability guidance lives in `references/template-path
 
 - 입력이 prefix면 `docs/discovery/` 아래에서 일치하는 문서를 찾는다.
 - 여러 후보가 나오면 임의 선택하지 않고 사용자 확인이 필요하다고 보고한다.
-- `.vendor/` 경로는 Discovery 문서 탐색 대상에서 제외한다.
+- `.stage-pilot/` 경로는 Discovery 문서 탐색 대상에서 제외한다.
 - template source는 단일 고정 경로로 가정하지 않는다.
 - `stage-pilot/templates/...`는 logical path로 취급하고, 실제 읽기 경로는 현재 workspace의 StagePilot 설치 형태에 맞게 해석한다.
 - template source를 읽을 때는 아래 순서로 후보를 확인한다.
 	1. `.stage-pilot/templates/...`
-	2. `.vendor/stage-pilot/templates/...`
-	3. `~/.stage-pilot/templates/...`
+	2. `~/.stage-pilot/templates/...`
 - 어떤 physical path를 선택했는지 생성 전에 내부적으로 확정하고, 경로 해석이 애매하면 이를 보고한다.
 
 ## 3. REQ 분해 원칙
@@ -101,6 +99,11 @@ Reference: template path portability guidance lives in `references/template-path
 - NFR은 독립 측정 가능성, 독립 backlog 가치, 운영 영향도가 충분할 때만 별도 REQ로 승격한다.
 - 특정 FR 또는 batch 검증 기준에 흡수하는 편이 적절한 NFR은 별도 REQ를 만들지 말고 Notes에 연결 근거를 남긴다.
 - baseline 문서 갱신 요구는 보통 `Documentation`, `Interface`, `Configuration` 중 가장 적절한 Type으로 분류한다.
+- Discovery가 "기능 계약 + 성능/운영 기준 + baseline 문서 정렬"을 함께 요구하는 경우에는 다음 우선 분해 패턴을 먼저 검토한다.
+	1. 기능 계약(상태 전이, 인터페이스, 실행 흐름) -> `Interface` 또는 가장 가까운 기능 Type
+	2. 상태별 budget, latency, 처리 시간, 계측 의무 -> `Non-Functional`
+	3. `docs/runtime-flows.md`/`docs/project-structure.md` 같은 baseline 정렬 -> `Documentation`
+- 성능 수치가 구현 전 운영 계측값에 의존하더라도, 측정 경로와 목표 기준이 Discovery에 이미 정리돼 있으면 별도 `Non-Functional` REQ로 승격해 REQ 단계에서 evidence 수집을 요구하는 편을 우선한다.
 
 ## 4. Type 및 경로 규칙
 

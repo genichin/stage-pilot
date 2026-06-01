@@ -31,8 +31,7 @@ This skill creates a profile-aware release document from one or more verified ba
 - 템플릿은 하나의 물리 경로만 고정하지 말고 `stage-pilot/templates/...`를 논리 경로로 취급한다.
 - 물리 경로는 다음 순서로 해석한다.
   1. `.stage-pilot/templates/...`
-  2. `.vendor/stage-pilot/templates/...`
-  3. `~/.stage-pilot/templates/...`
+  2. `~/.stage-pilot/templates/...`
 - 여러 후보가 동시에 존재하면 가장 우선순위가 높은 한 곳만 사용하고, 서로 다른 설치 위치의 템플릿을 섞지 않는다.
 - 템플릿 source path와 생성 target path를 혼동하지 않는다.
   - source: `stage-pilot/templates/...`

@@ -51,8 +51,7 @@ This skill creates a new batch delivery unit from already-selected approved requ
 - 배치 템플릿은 하나의 물리 경로만 고정하지 말고 `stage-pilot/templates/batches/...`를 논리 경로로 취급한다.
 - 물리 경로는 다음 순서로 해석한다.
   1. `.stage-pilot/templates/batches/...`
-  2. `.vendor/stage-pilot/templates/batches/...`
-  3. `~/.stage-pilot/templates/batches/...`
+  2. `~/.stage-pilot/templates/batches/...`
 - 여러 후보가 동시에 존재하면 가장 우선순위가 높은 한 곳만 사용하고, 서로 다른 설치 위치의 템플릿을 섞지 않는다.
 - 이 resolution rule은 SKILL.md 본문에 그대로 적어 두는 편이 좋다. 배치 템플릿이 실제로 존재하는 현재 머신의 경로만 적어 두면 다른 PC나 다른 agent install shape에서 portability가 떨어진다.
 - 템플릿 source path와 생성 target path를 혼동하지 않는다.
@@ -90,6 +89,7 @@ This skill creates a new batch delivery unit from already-selected approved requ
 3. 필요한 템플릿의 논리 경로를 현재 환경의 물리 경로로 해석하고, 어떤 위치를 사용할지 확정한다.
 4. 현재 저장소의 기존 batch 문서(`docs/batches/index.md`, 가능하면 가장 최근 batch의 `index.md`/`planning.md`)를 먼저 읽어 로컬 heading, register 표기, 문체를 확인한다. 템플릿은 scaffold source이고, target 문서는 저장소 로컬 형식을 우선한다.
 5. REQ 수, 영향 범위, 구조/인터페이스/런타임 영향 여부를 기준으로 `standard` 또는 `batch-lite` profile을 결정한다.
+   - 특히 같은 Discovery에서 나온 REQ 묶음이 (a) runtime 또는 interface 구조 변경, (b) 성능/운영 budget 같은 Non-Functional 기준, (c) baseline 문서 정렬을 함께 포함하면 기본값은 `standard`로 본다. 이런 조합은 planning만으로 끝나지 않고 design, implementation, verification 문서를 같은 턴에 scaffold하는 편이 drift와 재작업을 줄인다.
 6. 단일 저위험 REQ면 `minor-change` fast path를 검토하되 최종 기록 profile은 `batch-lite`로 남긴다.
 7. 배치 제목과 slug를 결정하고 다음 `BAT-ID`를 계산한다.
 8. profile에 맞는 템플릿으로 batch 폴더와 문서를 생성하되, placeholder를 그대로 두지 말고 이번 REQ 집합 기준의 구체적 초안 내용을 즉시 채운다.
@@ -117,7 +117,7 @@ This skill creates a new batch delivery unit from already-selected approved requ
    - planning의 `Design Gate`를 다시 보고 필요하면 `design.md`를 추가한다.
 
 6. 템플릿 경로를 한 설치 형태에만 고정하는 실수
-   - `.stage-pilot`, `.vendor/stage-pilot`, `~/.stage-pilot` 순서의 resolution rule을 따른다.
+   - `.stage-pilot`, `~/.stage-pilot` 순서의 resolution rule을 따른다.
 
 7. pack-level 문서를 빼먹는 실수
    - 외부 skill pack의 SKILL.md를 실제 수정해 버전이 바뀌면 `README.md` inventory와 `CHANGELOG.md`도 같은 턴에 함께 갱신한다.

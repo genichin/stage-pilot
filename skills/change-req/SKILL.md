@@ -1,7 +1,7 @@
 ---
 name: change-req
 description: "Use when: updating an existing requirement after approval or implementation, running /change-req with a REQ ID or file path, recording a change-request entry before overwriting a REQ, analyzing impacted batches/releases, or deciding whether an Implemented REQ must be downgraded and reverified."
-version: 0.8.0
+version: 0.8.1
 author: Justin Ko
 license: private
 argument-hint: "예: req-001 또는 docs/srs/Documentation/req-001_minor-docs.md"
@@ -94,6 +94,13 @@ This skill applies a controlled change to an existing REQ by recording a new cha
 - 재검증 필요 여부
 - 상태 유지 또는 상태 되돌림 결과
 - `docs/srs/index.md` 갱신 결과
+
+# Common Pitfalls
+
+1. 활성 batch 안에서 계약/필드 순서 같은 외부 계약을 바꾸면서 REQ만 수정하고 delivery 산출물과 baseline 문서를 같이 재정렬하지 않는 실수
+   - 예: persistence flat slot 순서, CTSP read/write 슬롯 순서, revision migration 시 기본값 채움 순서 변경.
+   - 이런 변경은 `change-req` 후에 source Discovery, 연결된 Approved REQ들, 현재 batch의 `planning/design/implementation/verification`, 그리고 `CTSP_PROTOCOL`/`CONFIGURATION`/`runtime-flows` 같은 기준 문서를 같은 변경 묶음으로 갱신해야 한다.
+   - verification evidence가 다시 필요해질 수 있으므로, 검증 전에는 batch를 `release-candidate`로 올리거나 REQ를 `Implemented`로 확정하지 않는다.
 
 # Validation
 

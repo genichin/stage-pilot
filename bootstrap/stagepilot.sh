@@ -22,9 +22,9 @@ fail() {
 
 run_doctor() {
   local script_dir package_root doctor_script
-  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  package_root="$(cd "${script_dir}/.." && pwd)"
-  doctor_script="${package_root}/.github/scripts/stagepilot-doctor.py"
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+  package_root="$(cd "${script_dir}/.." && pwd -P)"
+  doctor_script="${package_root}/scripts/stagepilot-doctor.py"
 
   [ -f "${doctor_script}" ] || fail "Doctor script not found: ${doctor_script}"
   command -v python3 >/dev/null 2>&1 || fail "python3 is required to run doctor"
@@ -34,9 +34,9 @@ run_doctor() {
 
 run_bootstrap_seed() {
   local script_dir package_root seed_script
-  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  package_root="$(cd "${script_dir}/.." && pwd)"
-  seed_script="${package_root}/.github/scripts/stagepilot-bootstrap-seed.py"
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+  package_root="$(cd "${script_dir}/.." && pwd -P)"
+  seed_script="${package_root}/scripts/stagepilot-bootstrap-seed.py"
 
   [ -f "${seed_script}" ] || fail "Bootstrap seed helper not found: ${seed_script}"
   command -v python3 >/dev/null 2>&1 || fail "python3 is required to generate a bootstrap seed"

@@ -94,6 +94,8 @@ This skill validates a proposed requirement document and promotes it to `Approve
 3. 대상 REQ들과 `docs/srs/index.md`를 읽는다.
 4. 각 REQ마다 필수 필드, Acceptance Criteria, Notes의 blocker 여부를 확인한다.
 5. AI가 근거 있게 정리할 수 있는 사소한 일관성 문제를 먼저 고친다.
+   - 승인 기록을 append 하거나 문서 말미를 patch할 때는 대상 REQ 파일을 전체 기준으로 다시 읽었는지 확인한다. offset/limit 기반 부분 읽기나 도구 축약 출력만 본 상태에서 Change Log를 덧붙이면 `Change Summary` 같은 제목/본문이 잘린 채 저장될 수 있다.
+   - 승인 패치 직후에는 최소한 (a) 대상 REQ의 새 Change Log tail, (b) `Status: Approved`, (c) `docs/srs/index.md`의 해당 Register 행을 다시 읽어 실제 저장 결과를 검증한다.
 6. source Discovery가 명시돼 있거나 `생성된 REQ 참조`로 추적 가능한 경우, 승인 전에 Discovery의 범위/결정/오픈 질문과 REQ가 모순되지 않는지 확인한다.
    - 특히 Discovery의 `사용자 결정 필요 항목 요약`, `REQ로 넘기기 전 확인 체크`, `범위 경계`, `리스크/가정 목록`에서 승인 blocker가 남아 있지 않은지 본다.
    - Discovery에 `Open` 상태 질문, 미확정 DECIDE/CONFIRM/DATA 항목, handoff 미승인 상태가 남아 있으면 승인 보류를 우선 검토한다.

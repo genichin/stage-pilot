@@ -111,7 +111,6 @@ class Doctor:
         self.findings.append(Finding(level=level, code=code, path=path, message=message))
 
     def run(self) -> int:
-        self.check_allowlist_targets()
         self.check_req_type_contract()
         self.check_design_template_contract()
         self.check_markdown_links(self.package_markdown_files(), relative_to=self.package_root)
@@ -135,7 +134,7 @@ class Doctor:
     def package_markdown_files(self) -> list[Path]:
         patterns = [
             Path("README.md"),
-            Path(".github/copilot-instructions.md"),
+            Path("source/instruction.md"),
             Path(".github/instructions"),
             Path(".github/skills"),
             Path(".github/templates"),
@@ -221,28 +220,9 @@ class Doctor:
 
         required_paths = [
             Path("bootstrap/install.sh"),
-            Path("bootstrap/source-allowlist.txt"),
             Path("examples/p3-change-management"),
         ]
         return all((self.workspace_root / path).exists() for path in required_paths)
-
-    def check_allowlist_targets(self) -> None:
-        allowlist_path = self.package_root / "bootstrap/source-allowlist.txt"
-        if not allowlist_path.exists():
-            self.add("ERROR", "missing-allowlist", allowlist_path, "source-allowlist.txt is missing.")
-            return
-
-        github_root = self.package_root / ".github"
-        for raw_line in allowlist_path.read_text(encoding="utf-8").splitlines():
-            line = raw_line.split("#", 1)[0].strip()
-            if not line:
-                continue
-            target = github_root / line.rstrip("/")
-            if line.endswith("/"):
-                if not target.is_dir():
-                    self.add("ERROR", "allowlist-missing-dir", allowlist_path, f"Allowlist entry '{line}' does not exist under .github/.")
-            elif not target.is_file():
-                self.add("ERROR", "allowlist-missing-file", allowlist_path, f"Allowlist entry '{line}' does not exist under .github/.")
 
     def check_req_type_contract(self) -> None:
         skill_path = self.package_root / ".github/skills/draft-req/SKILL.md"

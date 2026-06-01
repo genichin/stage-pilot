@@ -18,15 +18,9 @@ current_os() {
 HOST_ROOT="${1:-$(pwd)}"
 
 ensure_host_structure() {
+  # active SDLC 문서 루트만 생성한다.
+  # .github/.claude 하위 파일은 install.sh가 source/에서 복사하며 필요한 디렉터리를 함께 만든다.
   local dirs=(
-    ".github"
-    ".github/agents"
-    ".github/instructions"
-    ".github/prompts"
-    ".github/runbooks/services"
-    ".github/scripts"
-    ".github/templates"
-    ".claude/commands"
     "docs/discovery"
     "docs/srs"
     "docs/batches"
@@ -39,6 +33,9 @@ ensure_host_structure() {
 }
 
 report_github_structure() {
+  if [ ! -d "${HOST_ROOT}/.github" ]; then
+    return 0
+  fi
   log "Host .github structure:"
   if command -v find >/dev/null 2>&1; then
     find "${HOST_ROOT}/.github" -maxdepth 2 -mindepth 1 | sed "s#${HOST_ROOT}/##" | sort

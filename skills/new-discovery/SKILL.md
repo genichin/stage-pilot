@@ -64,8 +64,7 @@ This skill decides whether an incoming request should update an existing Discove
 - 템플릿은 하나의 물리 경로만 고정하지 말고 `stage-pilot/templates/...`를 논리 경로로 취급한다.
 - 물리 경로는 다음 순서로 해석한다.
 	1. `.stage-pilot/templates/...`
-	2. `.vendor/stage-pilot/templates/...`
-	3. `~/.stage-pilot/templates/...`
+	2. `~/.stage-pilot/templates/...`
 - 여러 후보가 동시에 존재하면 가장 우선순위가 높은 한 곳만 사용하고, 서로 다른 설치 위치의 템플릿을 섞지 않는다.
 - 템플릿 source path와 생성 target path를 혼동하지 않는다.
 	- source: `stage-pilot/templates/...`
@@ -130,7 +129,7 @@ This skill decides whether an incoming request should update an existing Discove
 	- GitHub issue 번호 또는 링크
 	- 이슈 제목의 핵심 명사
 	- 기능명, 모듈명, 동사, 영향 범위 키워드
-- `docs/discovery/` 아래 기존 문서를 탐색할 때는 `.vendor/` 경로를 제외하고 아래 순서로 후보를 찾는다.
+- `docs/discovery/` 아래 기존 문서를 탐색할 때는 `.stage-pilot/` 경로를 제외하고 아래 순서로 후보를 찾는다.
 	- issue 번호 또는 링크의 정확 일치
 	- 이슈 제목과 파일명 slug의 핵심 키워드 일치
 	- 기존 Discovery 문서 안의 문제 정의, FR/NFR, 범위 경계 키워드 일치

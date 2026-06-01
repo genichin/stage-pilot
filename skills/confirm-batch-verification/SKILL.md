@@ -26,6 +26,8 @@ This skill checks whether a batch verification document has enough evidence to r
 # Core Rules
 
 - verification에 미해결 blocker가 있으면 승인하지 않는다.
+- verification에 미해결 blocker가 있으면 승인하지 않는다.
+- 단, verification 문서에 명시적 `Human Approval Memo`가 있고 승인자, 승인 시각, 스킵/수용 범위, 잔여 리스크, 승인 근거가 모두 적혀 있으면 그 메모가 명시적으로 수용한 blocker는 residual risk로 보고 승인할 수 있다. 이 경우 승인 결과에는 사람이 수용한 예외 범위를 함께 요약한다.
 - 포함된 REQ의 acceptance criteria가 evidence와 연결돼야 한다.
 - `batch-lite`는 design 문서 없이도 승인할 수 있지만, planning의 `Design Gate`가 design 불필요를 명시하고 verification이 구조 영향 없음 또는 baseline 영향 없음을 확인해야 한다.
 - 승인 성공 시 batch status는 `release-candidate`가 된다.
@@ -37,6 +39,7 @@ This skill checks whether a batch verification document has enough evidence to r
 3. Acceptance Mapping, Evidence, Blocking Issues를 점검한다.
 4. 승인 가능하면 verification 상태와 batch index 상태를 갱신한다.
 5. 승인 불가면 상태는 유지하고 blocker를 보고한다.
+6. verification에 `Human Approval Memo`가 있으면, 메모가 수용한 blocker와 여전히 승인 불가한 blocker를 분리해서 판단한다. 사람이 수용한 항목만 남아 있다면 verification을 `approved`로 올리고 batch를 `release-candidate`로 승격할 수 있다.
 
 # Validation
 

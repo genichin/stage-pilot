@@ -25,9 +25,8 @@ These names are portable across Hermes Agent, GitHub Copilot, Claude, and simila
 
 When resolving a logical template path, check candidates in this order:
 
-1. Workspace-local install: `.stage-pilot/templates/...`
-2. Vendor/subtree install: `.vendor/stage-pilot/templates/...`
-3. Hermes external install: `~/.stage-pilot/templates/...`
+1. Workspace-local / subtree install: `.stage-pilot/templates/...`
+2. Hermes external install: `~/.stage-pilot/templates/...`
 
 Prefer the current workspace's installed copy over a user-level fallback.
 
@@ -53,7 +52,6 @@ If multiple physical candidates exist:
 A common portability mistake is to hardcode only one of these:
 
 - `.stage-pilot/templates/...`
-- `.vendor/stage-pilot/templates/...`
 - `~/.stage-pilot/templates/...`
 
 That works for one install shape but breaks on another machine or agent. The durable pattern is:

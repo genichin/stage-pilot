@@ -12,7 +12,7 @@ Options:
   --repo-url <url>    Fallback repository URL when remote is missing.
                       (default: https://github.com/genichin/stage-pilot.git)
   --branch <name>     Upstream branch to sync (default: main)
-  --prefix <path>     Subtree prefix path (default: .vendor/stage-pilot)
+  --prefix <path>     Subtree prefix path (default: .stage-pilot)
   --overwrite         Overwrite conflicts during install (same as --policy replace).
                       (default behavior)
   --no-overwrite      Preserve host files on conflicts (same as --policy preserve).
@@ -47,7 +47,7 @@ DRY_RUN=0
 REMOTE_NAME="stage-pilot"
 REPO_URL="https://github.com/genichin/stage-pilot.git"
 BRANCH="main"
-PREFIX=".vendor/stage-pilot"
+PREFIX=".stage-pilot"
 POLICY="replace"
 SKIP_INSTALL=0
 ARGS=()
