@@ -15,8 +15,9 @@ source/ 아래의 모든 파일을 호스트 저장소 루트로 복사한다.
   -> HOST_ROOT/CLAUDE.md 의 StagePilot 마커 블록  (Claude용)
 (instruction.md 자체는 루트로 그대로 복사하지 않는다.)
 
-또한 .stage-pilot/skills를 .github/skills로 동기화한다.
+또한 .stage-pilot/skills를 .github/skills 및 .agents/skills로 동기화한다.
   .stage-pilot/skills/... -> HOST_ROOT/.github/skills/...
+  .stage-pilot/skills/... -> HOST_ROOT/.agents/skills/...
 
 Options:
   --dry-run   변경 없이 복사/생성 계획만 출력한다.
@@ -150,11 +151,12 @@ if [ -f "${INSTRUCTION_SOURCE}" ]; then
   copy_one "${INSTRUCTION_SOURCE}" ".github/copilot-instructions.md"
 fi
 
-# 1-c) .stage-pilot/skills -> .github/skills 동기화 (심볼릭 링크 미사용)
+# 1-c) .stage-pilot/skills -> .github/skills, .agents/skills 동기화 (심볼릭 링크 미사용)
 if [ -d "${SKILLS_SOURCE_DIR}" ]; then
   while IFS= read -r -d '' src_file; do
     rel_path="${src_file#${SKILLS_SOURCE_DIR}/}"
     copy_one "${src_file}" ".github/skills/${rel_path}"
+    copy_one "${src_file}" ".agents/skills/${rel_path}"
   done < <(find "${SKILLS_SOURCE_DIR}" -type f -print0 | sort -z)
 else
   log "skills source not found: ${SKILLS_SOURCE_DIR}"
